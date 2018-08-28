@@ -6,6 +6,7 @@ class FormLogin extends Component {
 
     constructor(props) {
         super(props);
+        this.isUnMounted = false;
         this.state = {
             fields: {},
             isLoginClicked: {}
@@ -39,15 +40,24 @@ class FormLogin extends Component {
                     userExists = true;
                     self.props.history.push('/home');
                 }
-                self.setState({
-                    isLoginClicked: {
-                        userExists: userExists
-                    }
-                });
+                // On change l'état du composant que si il est toujours dans le DOM
+                // (Erreur de Login)
+                if (!self.isUnMounted) {
+                    self.setState({
+                        isLoginClicked: {
+                            userExists: userExists
+                        }
+                    });
+                }
             })
             .catch(function (error) {
                 console.log(error);
             });
+    }
+
+    // Méthode appelé juste avant que le composant soit démonté et détruit du DOM
+    componentWillUnmount() {
+        this.isUnMounted = true;
     }
 
     render() {
