@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import NavBarBtn from './NavBarBtn';
 
 class FormRegister extends Component {
 
@@ -24,7 +25,7 @@ class FormRegister extends Component {
         let formIsValid = true;
 
         // Validation username si input touched
-        if(touched['username']){
+        if (touched['username']) {
             // Required
             if (!fields['username']) {
                 formIsValid = false;
@@ -39,7 +40,7 @@ class FormRegister extends Component {
             }
         }
         // Validation password si input touched
-        if(touched['password']){
+        if (touched['password']) {
             // Required
             if (!fields['password']) {
                 formIsValid = false;
@@ -64,6 +65,7 @@ class FormRegister extends Component {
     render() {
         return (
             <div className="container-fluid bg-light py-3">
+                <NavBarBtn />
                 <div className="row">
                     <div className="col-md-6 mx-auto">
                         <div className="card card-body">

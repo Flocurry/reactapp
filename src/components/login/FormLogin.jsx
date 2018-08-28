@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import NavBarBtn from './NavBarBtn';
 
 class FormLogin extends Component {
 
@@ -36,6 +37,7 @@ class FormLogin extends Component {
                 let userExists = false;
                 if (response.data.length === 1) {
                     userExists = true;
+                    self.props.history.push('/home');
                 }
                 self.setState({
                     isLoginClicked: {
@@ -51,6 +53,7 @@ class FormLogin extends Component {
     render() {
         return (
             <div className="container-fluid bg-light py-3">
+                <NavBarBtn />
                 <div className="row">
                     <div className="col-md-6 mx-auto">
                         <div className="card card-body">
