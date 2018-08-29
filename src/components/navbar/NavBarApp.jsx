@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from "react-router-dom";
+import { object, string } from "prop-types";
 import axios from 'axios';
 
 import {
@@ -14,13 +15,25 @@ import {
 
 class NavBarApp extends Component {
 
+    // On définit le type des proprités du component
+    static propTypes = {
+        user: object.isRequired,
+        gender: string.isRequired,
+    }
+
+    // Valeurs des props par défaut
+    // Si on oublie les props quand on instancie le composant
+    static defaultProps = {
+        user: {},
+        gender: 'Mr'
+    }
+
     logout(e) {
         e.preventDefault();
-        let user = JSON.parse(localStorage.getItem('userLogged'));
         let req = {
             url: 'http://localhost/users/logout',
             method: 'PUT',
-            data: user
+            data: this.props.user
         }
         let self = this;
         axios(req).then(response => {
@@ -54,7 +67,7 @@ class NavBarApp extends Component {
                             </UncontrolledDropdown>
                             <UncontrolledDropdown nav inNavbar>
                                 <DropdownToggle nav caret>
-                                    <span className="fa fa-user"></span> Florian
+                                    <span className="fa fa-user"></span> {this.props.gender}. {this.props.user.username}
                                 </DropdownToggle>
                                 <DropdownMenu>
                                     <DropdownItem onClick={this.logout.bind(this)}>
