@@ -7,7 +7,7 @@ class FormLogin extends Component {
     constructor(props) {
         super(props);
         this.isUnMounted = false;
-        this.state = {
+        this.state = {  
             fields: {},
             isLoginClicked: {}
         }
@@ -38,6 +38,8 @@ class FormLogin extends Component {
                 let userExists = false;
                 if (response.data.length === 1) {
                     userExists = true;
+                    // setter
+                    localStorage.setItem('userLogged', JSON.stringify(response.data[0]));
                     self.props.history.push('/home');
                 }
                 // On change l'état du composant que si il est toujours dans le DOM
