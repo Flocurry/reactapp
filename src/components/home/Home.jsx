@@ -3,8 +3,9 @@ import NavBarApp from '../navbar/NavBarApp';
 
 class Home extends Component {
 
-    constructor(props) {
-        super(props);
+    constructor() {
+        // On appelle le constructeur parent
+        super();
         this.user = JSON.parse(localStorage.getItem('userLogged'));
         this.gender = this.getGender(this.user.sexe);
     }

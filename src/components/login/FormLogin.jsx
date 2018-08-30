@@ -7,11 +7,10 @@ class FormLogin extends Component {
     constructor(props) {
         super(props);
         this.isUnMounted = false;
-        this.state = {  
+        this.state = {
             fields: {},
             isLoginClicked: {}
         }
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     handleChange(fieldName, e) {
@@ -22,36 +21,37 @@ class FormLogin extends Component {
         });
     }
 
-    handleSubmit = event => {
-        event.preventDefault();
+    handleSubmit(e) {
+        // Permet de n epas rafraîchir la page sur le submit du form
+        e.preventDefault();
 
         let username = this.state.fields.username;
         let password = this.state.fields.password;
-        let self = this;
-
-        axios.get('http://localhost/login/user?username=' + username + '&password=' + password,
-            {
-                withCredentials: true,
-                credentials: 'same-origin'
-            })
-            .then(function (response) {
-                let userExists = false;
-                if (response.data.length === 1) {
-                    userExists = true;
-                    // setter
-                    localStorage.setItem('userLogged', JSON.stringify(response.data[0]));
-                    self.props.history.push('/home');
-                }
-                // On change l'état du composant que si il est toujours dans le DOM
-                // (Erreur de Login)
-                if (!self.isUnMounted) {
-                    self.setState({
-                        isLoginClicked: {
-                            userExists: userExists
-                        }
-                    });
-                }
-            })
+        let req = {
+            url: 'http://localhost/login/user?username=' + username + '&password=' + password,
+            method: 'GET',
+            withCredentials: true,
+            credentials: 'same-origin'
+        }
+        // Arrow function permet d'avoir le this dans le callBack
+        axios(req).then(response => {
+            let userExists = false;
+            if (response.data.length === 1) {
+                userExists = true;
+                // setter
+                localStorage.setItem('userLogged', JSON.stringify(response.data[0]));
+                this.props.history.push('/home');
+            }
+            // On change l'état du composant que si il est toujours dans le DOM
+            // (Erreur de Login)
+            if (!this.isUnMounted) {
+                this.setState({
+                    isLoginClicked: {
+                        userExists: userExists
+                    }
+                });
+            }
+        })
             .catch(function (error) {
                 console.log(error);
             });
@@ -70,7 +70,9 @@ class FormLogin extends Component {
                     <div className="col-md-6 mx-auto">
                         <div className="card card-body">
                             <h3 className="text-center mb-4">Login</h3>
-                            <form onSubmit={this.handleSubmit}>
+                            <form
+                                // This syntax ensures `this` is bound within handleClick
+                                onSubmit={(e) => this.handleSubmit(e)}>
                                 <div hidden={!('userExists' in this.state.isLoginClicked) || this.state.isLoginClicked.userExists} className="alert alert-danger">
                                     <strong>Fail!</strong> The user doesn't exist.
                                 </div>
@@ -83,7 +85,8 @@ class FormLogin extends Component {
                                             <div className="input-group-prepend">
                                                 <div className="input-group-text"><i className="fa fa-user text-info"></i></div>
                                             </div>
-                                            <input name="username" type="text" className="form-control" placeholder="username" onChange={this.handleChange.bind(this, 'username')} />
+                                            <input name="username" type="text" className="form-control" placeholder="username"
+                                                onChange={(e) => this.handleChange('username', e)} />
                                         </div>
                                     </div>
                                     <div className="form-group row">
@@ -91,7 +94,8 @@ class FormLogin extends Component {
                                             <div className="input-group-prepend">
                                                 <div className="input-group-text"><i className="fa fa-lock text-info"></i></div>
                                             </div>
-                                            <input name="password" type="password" className="form-control" placeholder="password" onChange={this.handleChange.bind(this, 'password')} />
+                                            <input name="password" type="password" className="form-control" placeholder="password"
+                                                onChange={(e) => this.handleChange('password', e)} />
                                         </div>
                                     </div>
                                     <div className="form-group row">

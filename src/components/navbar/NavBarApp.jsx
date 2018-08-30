@@ -28,6 +28,13 @@ class NavBarApp extends Component {
         gender: 'Mr'
     }
 
+    constructor() {
+        super();
+        this.state = {
+            color: 'grey'
+        }
+    }
+
     logout(e) {
         e.preventDefault();
         let req = {
@@ -35,14 +42,21 @@ class NavBarApp extends Component {
             method: 'PUT',
             data: this.props.user
         }
-        let self = this;
+        // Arrow function permet d'avoir le this dans le callBack
         axios(req).then(response => {
             // On supprime tous les localStorage
             localStorage.clear();
             // Redirection vers le composant login
-            self.props.history.push('/login');
+            this.props.history.push('/login');
         }).catch(function (error) {
             console.log(error);
+        });
+    }
+
+    changeColor(param, e) {
+        e.preventDefault();
+        this.setState({
+            color: param
         });
     }
 
@@ -66,11 +80,16 @@ class NavBarApp extends Component {
                                 </DropdownMenu>
                             </UncontrolledDropdown>
                             <UncontrolledDropdown nav inNavbar>
-                                <DropdownToggle nav caret>
+                                <DropdownToggle nav caret
+                                    style={{ color: this.state.color }}
+                                    // This syntax ensures `this` is bound within handleClick
+                                    onMouseOver={(e) => this.changeColor('blue', e)}
+                                    onMouseLeave={(e) => this.changeColor('grey', e)}>
                                     <span className="fa fa-user"></span> {this.props.gender}. {this.props.user.username}
                                 </DropdownToggle>
                                 <DropdownMenu>
-                                    <DropdownItem onClick={this.logout.bind(this)}>
+                                    <DropdownItem
+                                        onClick={(e) => this.logout(e)}>
                                         Lougout
                                     </DropdownItem>
                                 </DropdownMenu>

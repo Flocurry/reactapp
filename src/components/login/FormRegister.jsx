@@ -77,7 +77,8 @@ class FormRegister extends Component {
                                             <div className="input-group-prepend">
                                                 <div className="input-group-text"><i className="fa fa-user text-info"></i></div>
                                             </div>
-                                            <input name="username" type="text" className="form-control" placeholder="username" onChange={this.handleValidation.bind(this, "username")} />
+                                            <input name="username" type="text" className="form-control" placeholder="username"
+                                                onChange={(e) => this.handleValidation('username', e)} />
                                         </div>
                                         <div hidden={!this.state.errors['username']} className="offset-sm-2 col-sm-8">
                                             <div>
@@ -92,7 +93,8 @@ class FormRegister extends Component {
                                             <div className="input-group-prepend">
                                                 <div className="input-group-text"><i className="fa fa-lock text-info"></i></div>
                                             </div>
-                                            <input name="password" type="password" className="form-control" placeholder="password" onChange={this.handleValidation.bind(this, "password")} />
+                                            <input name="password" type="password" className="form-control" placeholder="password"
+                                                onChange={(e) => this.handleValidation('password', e)} />
                                         </div>
                                         <div hidden={!this.state.errors['password']} className="offset-sm-2 col-sm-8">
                                             <div>
