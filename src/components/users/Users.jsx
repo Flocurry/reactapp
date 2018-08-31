@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 import NavBarApp from '../navbar/NavBarApp';
 
-class Home extends Component {
+class Users extends Component {
 
     render() {
         return (
             <div>
                 <NavBarApp />
-                Home
+                Users
             </div>
         );
     }
 }
 
-export default Home;
+export default Users;

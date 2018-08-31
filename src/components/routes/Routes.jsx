@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-d
 import FormLogin from '../login/FormLogin';
 import FormRegister from '../login/FormRegister';
 import Home from '../home/Home';
+import Users from '../users/Users';
+import Roles from '../roles/Roles';
 
 class Routes extends Component {
     render() {
@@ -14,6 +16,8 @@ class Routes extends Component {
                         <Route exact path='/login' component={FormLogin} />
                         <Route exact path='/register' component={FormRegister} />
                         <Route exact path='/home' component={Home} />
+                        <Route exact path='/users' component={Users} />
+                        <Route exact path='/roles' component={Roles} />
                         {/* Route par défaut si url non connu*/}
                         <Redirect to='/login' />
                     </Switch>

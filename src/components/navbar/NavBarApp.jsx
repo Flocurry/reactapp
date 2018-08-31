@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
 import { withRouter } from "react-router-dom";
-import { object, string } from "prop-types";
-import axios from 'axios';
-
 import {
     Collapse,
     Navbar,
@@ -12,52 +9,18 @@ import {
     DropdownMenu,
     DropdownItem
 } from 'reactstrap';
+import Lougout from './Lougout';
 
 class NavBarApp extends Component {
 
-    // On définit le type des proprités du component
-    static propTypes = {
-        user: object.isRequired,
-        gender: string.isRequired,
-    }
-
-    // Valeurs des props par défaut
-    // Si on oublie les props quand on instancie le composant
-    static defaultProps = {
-        user: {},
-        gender: 'Mr'
-    }
-
-    constructor() {
-        super();
-        this.state = {
-            color: 'grey'
-        }
-    }
-
-    logout(e) {
+    handleUsers(e) {
         e.preventDefault();
-        let req = {
-            url: 'http://localhost/users/logout',
-            method: 'PUT',
-            data: this.props.user
-        }
-        // Arrow function permet d'avoir le this dans le callBack
-        axios(req).then(response => {
-            // On supprime tous les localStorage
-            localStorage.clear();
-            // Redirection vers le composant login
-            this.props.history.push('/login');
-        }).catch(function (error) {
-            console.log(error);
-        });
+        this.props.history.push('/users');
     }
 
-    changeColor(param, e) {
+    handleRoles(e) {
         e.preventDefault();
-        this.setState({
-            color: param
-        });
+        this.props.history.push('/roles');
     }
 
     render() {
@@ -71,29 +34,17 @@ class NavBarApp extends Component {
                                     Admin
                                 </DropdownToggle>
                                 <DropdownMenu>
-                                    <DropdownItem>
+                                    <DropdownItem
+                                        onClick={(e) => this.handleUsers(e)} >
                                         Users
                                     </DropdownItem>
-                                    <DropdownItem>
+                                    <DropdownItem
+                                        onClick={(e) => this.handleRoles(e)}>
                                         Roles
                                     </DropdownItem>
                                 </DropdownMenu>
                             </UncontrolledDropdown>
-                            <UncontrolledDropdown nav inNavbar>
-                                <DropdownToggle nav caret
-                                    style={{ color: this.state.color }}
-                                    // This syntax ensures `this` is bound within handleClick
-                                    onMouseOver={(e) => this.changeColor('blue', e)}
-                                    onMouseLeave={(e) => this.changeColor('grey', e)}>
-                                    <span className="fa fa-user"></span> {this.props.gender}. {this.props.user.username}
-                                </DropdownToggle>
-                                <DropdownMenu>
-                                    <DropdownItem
-                                        onClick={(e) => this.logout(e)}>
-                                        Lougout
-                                    </DropdownItem>
-                                </DropdownMenu>
-                            </UncontrolledDropdown>
+                            <Lougout />
                         </Nav>
                     </Collapse>
                 </Navbar>
