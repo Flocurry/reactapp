@@ -51,10 +51,9 @@ class FormLogin extends Component {
                     }
                 });
             }
-        })
-            .catch(function (error) {
-                console.log(error);
-            });
+        }).catch(function (error) {
+            console.log(error);
+        });
     }
 
     // Méthode appelé juste avant que le composant soit démonté et détruit du DOM
