@@ -14,6 +14,8 @@ class FormRegister extends Component {
         super(props);
         this.state = {
             imageSrc: null,
+            allInputOk: false,
+            fileIsUpload: false,
             fields: {},
             errors: {},
             roles: [],
@@ -26,27 +28,35 @@ class FormRegister extends Component {
     }
 
     onFileChanged(e) {
+        let allInputOk = this.state.allInputOk;
+        let fileIsUpload = this.state.fileIsUpload;
         if (e.target.files && e.target.files[0]) {
+            fileIsUpload = true;
             let selectedFile = e.target.files[0];
             const reader = new FileReader();
             let self = this;
             reader.onload = function (r) {
                 self.setState({
-                    imageSrc: r.target.result
+                    imageSrc: r.target.result,
                 });
             }
             reader.readAsDataURL(selectedFile);
-            this.setState({ imageSrc: reader });
-
+            this.setState({
+                imageSrc: reader,
+                fileIsUpload: fileIsUpload,
+                formIsValid: allInputOk && fileIsUpload
+            });
         }
     }
 
     deleteFile(e) {
         this.setState({
-            imageSrc: null
+            fileIsUpload: false,
+            imageSrc: null,
+            formIsValid: false
         });
         document.getElementById('fileInput').value = '';
-        
+
     }
 
     componentDidMount() {
@@ -69,47 +79,87 @@ class FormRegister extends Component {
 
     handleValidation(fieldName, e) {
         let fields = this.state.fields;
+        let allInputOk = this.state.allInputOk;
+        let fileIsUpload = this.state.fileIsUpload;
         fields[fieldName] = e.target.value;
         let touched = this.state.touched;
         touched[fieldName] = true;
         let errors = {};
-        let formIsValid = true;
 
-        // Validation username si input touched
-        if (touched['username']) {
-            // Required
-            if (!fields['username']) {
-                formIsValid = false;
-                errors['username'] = 'Username is required.';
-            }
-            else {
-                // Length < 20
-                if (fields['username'].length > 20) {
-                    formIsValid = false;
-                    errors['username'] = 'Username is up by 20 characters.';
-                }
+        // Validation username
+        // Required
+        if (!fields['username']) {
+            allInputOk = false;
+            errors['username'] = 'Username is required.';
+        }
+        else {
+            // Length < 20
+            if (fields['username'].length > 20) {
+                allInputOk = false;
+                errors['username'] = 'Username is up by 20 characters.';
             }
         }
-        // Validation password si input touched
-        if (touched['password']) {
-            // Required
-            if (!fields['password']) {
-                formIsValid = false;
-                errors['password'] = 'Password is required.';
-            }
-            else {
-                // Length < 20
-                if (fields['password'].length > 20) {
-                    formIsValid = false;
-                    errors['password'] = 'Password is up by 20 characters.';
-                }
+        // Validation firstname
+        // Required
+        if (!fields['firstname']) {
+            allInputOk = false;
+            errors['firstname'] = 'Firstname is required.';
+        }
+        else {
+            // Length < 20
+            if (fields['firstname'].length > 20) {
+                allInputOk = false;
+                errors['firstname'] = 'Firstname is up by 20 characters.';
             }
         }
+        // Validation lastname
+        // Required
+        if (!fields['lastname']) {
+            allInputOk = false;
+            errors['lastname'] = 'Lastname is required.';
+        }
+        else {
+            // Length < 20
+            if (fields['lastname'].length > 20) {
+                allInputOk = false;
+                errors['lastname'] = 'Lastname is up by 20 characters.';
+            }
+        }
+        // Validation email
+        let regexp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        // Required
+        if (!fields['email']) {
+            allInputOk = false;
+            errors['email'] = 'Email is required.';
+        }
+        else {
+            // Valid adress
+            allInputOk = regexp.test(fields['email']);
+            if (!allInputOk) {
+                errors['email'] = 'Email not valid.';
+            }
+        }
+        // Validation password
+        // Required
+        if (!fields['password']) {
+            allInputOk = false;
+            errors['password'] = 'Password is required.';
+        }
+        else {
+            // Length < 20
+            if (fields['password'].length > 20) {
+                allInputOk = false;
+                errors['password'] = 'Password is up by 20 characters.';
+            }
+        }
+
         // On set l'état du composant
         this.setState({
+            allInputOk: allInputOk,
+            fileIsUpload: fileIsUpload,
             errors: errors,
             touched: touched,
-            formIsValid: formIsValid
+            formIsValid: allInputOk && fileIsUpload
         });
     }
 
@@ -134,7 +184,7 @@ class FormRegister extends Component {
                                             <input name="username" type="text" className="form-control" placeholder="username"
                                                 onChange={(e) => this.handleValidation('username', e)} />
                                         </div>
-                                        <div hidden={!this.state.errors['username']} className="offset-sm-2 col-sm-8">
+                                        <div hidden={!this.state.errors['username'] || !this.state.touched['username']} className="offset-sm-2 col-sm-8">
                                             <div>
                                                 <div className="alert alert-danger">
                                                     {this.state.errors['username']}
@@ -150,7 +200,7 @@ class FormRegister extends Component {
                                             <input name="firstname" type="text" className="form-control" placeholder="firstname"
                                                 onChange={(e) => this.handleValidation('firstname', e)} />
                                         </div>
-                                        <div hidden={!this.state.errors['firstname']} className="offset-sm-2 col-sm-8">
+                                        <div hidden={!this.state.errors['firstname'] || !this.state.touched['firstname']} className="offset-sm-2 col-sm-8">
                                             <div>
                                                 <div className="alert alert-danger">
                                                     {this.state.errors['firstname']}
@@ -166,7 +216,7 @@ class FormRegister extends Component {
                                             <input name="lastname" type="lastname" className="form-control" placeholder="lastname"
                                                 onChange={(e) => this.handleValidation('lastname', e)} />
                                         </div>
-                                        <div hidden={!this.state.errors['lastname']} className="offset-sm-2 col-sm-8">
+                                        <div hidden={!this.state.errors['lastname'] || !this.state.touched['lastname']} className="offset-sm-2 col-sm-8">
                                             <div>
                                                 <div className="alert alert-danger">
                                                     {this.state.errors['lastname']}
@@ -182,7 +232,7 @@ class FormRegister extends Component {
                                             <input name="email" type="text" className="form-control" placeholder="email"
                                                 onChange={(e) => this.handleValidation('email', e)} />
                                         </div>
-                                        <div hidden={!this.state.errors['email']} className="offset-sm-2 col-sm-8">
+                                        <div hidden={!this.state.errors['email'] || !this.state.touched['email']} className="offset-sm-2 col-sm-8">
                                             <div>
                                                 <div className="alert alert-danger">
                                                     {this.state.errors['email']}
@@ -198,7 +248,7 @@ class FormRegister extends Component {
                                             <input name="password" type="password" className="form-control" placeholder="password"
                                                 onChange={(e) => this.handleValidation('password', e)} />
                                         </div>
-                                        <div hidden={!this.state.errors['password']} className="offset-sm-2 col-sm-8">
+                                        <div hidden={!this.state.errors['password'] || !this.state.touched['password']} className="offset-sm-2 col-sm-8">
                                             <div>
                                                 <div className="alert alert-danger">
                                                     {this.state.errors['password']}
