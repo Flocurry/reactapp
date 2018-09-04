@@ -8,7 +8,7 @@ class UploadFile extends Component {
                     <div className="custom-file" id="customFile" lang="es">
                         <div className="input-group">
                             <input id='fileInput' type="file" accept="image/png" className="form-control"
-                                onChange={this.props.change} />
+                                onChange={(e) => this.props.change('image', e)} />
                             <span className="input-group-btn">
                                 <button type="button" className="btn btn-danger"
                                     onClick={this.props.delete} >

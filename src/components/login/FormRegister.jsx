@@ -16,23 +16,30 @@ class FormRegister extends Component {
             imageSrc: null,
             allInputOk: false,
             fileIsUpload: false,
-            fields: {},
+            fields: {
+                role_id: 1,
+                sexe: 'Homme'
+            },
             errors: {},
             roles: [],
             touched: {
                 username: false,
                 password: false
             },
-            formIsValid: false
+            formIsValid: false,
+            userAdded: false,
+            registerIsClicked: false
         }
     }
 
-    onFileChanged(e) {
+    onFileChanged(fieldName, e) {
+        let fields = this.state.fields;
         let allInputOk = this.state.allInputOk;
         let fileIsUpload = this.state.fileIsUpload;
         if (e.target.files && e.target.files[0]) {
             fileIsUpload = true;
             let selectedFile = e.target.files[0];
+            fields[fieldName] = selectedFile;
             const reader = new FileReader();
             let self = this;
             reader.onload = function (r) {
@@ -163,6 +170,56 @@ class FormRegister extends Component {
         });
     }
 
+    onChangeRole(fieldName, value, e) {
+        let fields = this.state.fields;
+        fields[fieldName] = value;
+        this.setState({
+            fields: fields
+        });
+    }
+
+    onChangeSexe(fieldName, value, e) {
+        let fields = this.state.fields;
+        fields[fieldName] = value;
+        this.setState({
+            fields: fields
+        });
+    }
+
+    onSubmitForm(e) {
+        // Permet de ne pas rafraîchir la page sur le submit du form
+        e.preventDefault();
+        let _formData = new FormData();
+        _formData.append("username", this.state.fields['username']);
+        _formData.append("firstname", this.state.fields['firstname']);
+        _formData.append("lastname", this.state.fields['lastname']);
+        _formData.append("sexe", this.state.fields['sexe']);
+        _formData.append("email", this.state.fields['email']);
+        _formData.append("password", this.state.fields['password']);
+        _formData.append("image", this.state.fields['image']);
+        _formData.append("role_id", this.state.fields['role_id']);
+
+        let req = {
+            url: 'http://localhost/users/save',
+            method: 'POST',
+            data: _formData,
+            withCredentials: true,
+            credentials: 'same-origin',
+        }
+        // Arrow function permet d'avoir le this dans le callBack
+        axios(req).then(response => {
+            let userAdded = response.data.successAdd;
+            // On change l'état du composant que si il est toujours dans le DOM
+            // (Erreur de Login)
+            this.setState({
+                userAdded: userAdded,
+                registerIsClicked: true
+            });
+        }).catch(function (error) {
+            console.log(error);
+        });
+    }
+
     render() {
         return (
             <div className="container-fluid bg-light py-3">
@@ -174,7 +231,13 @@ class FormRegister extends Component {
                                 <img src={this.state.imageSrc || 'https://bluecowsoftware.com/wp-content/uploads/2016/10/05-512.png'} alt="Test" />
                             </div>
                             <h3 className="text-center mb-4">Register</h3>
-                            <form>
+                            <form onSubmit={(e) => this.onSubmitForm(e)} >
+                                <div hidden={!this.state.userAdded || !this.state.registerIsClicked} className="alert alert-success">
+                                    <strong>Success!</strong> The user has been created.
+                                </div>
+                                <div hidden={this.state.userAdded || !this.state.registerIsClicked} className="alert alert-danger">
+                                    <strong>Fail!</strong> The user has not been created.
+                                 </div>
                                 <fieldset>
                                     <div className="form-group row">
                                         <div className="input-group offset-sm-2 col-sm-8">
@@ -257,10 +320,12 @@ class FormRegister extends Component {
                                         </div>
                                     </div>
                                     <SelectRole
-                                        datas={this.state.roles} />
-                                    <RadioBtn />
+                                        datas={this.state.roles}
+                                        onChangeRole={(fieldName, value, e) => this.onChangeRole(fieldName, value, e)} />
+                                    <RadioBtn
+                                        onChangeSexe={(fieldName, value, e) => this.onChangeSexe(fieldName, value, e)} />
                                     <UploadFile
-                                        change={(e) => this.onFileChanged(e)}
+                                        change={(fieldName, e) => this.onFileChanged(fieldName, e)}
                                         delete={(e) => this.deleteFile(e)} />
                                     <div className="form-group row">
                                         <div className="offset-sm-2 col-sm-8 pb-3 pt-2">

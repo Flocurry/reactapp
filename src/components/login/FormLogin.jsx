@@ -22,7 +22,7 @@ class FormLogin extends Component {
     }
 
     handleSubmit(e) {
-        // Permet de n epas rafraîchir la page sur le submit du form
+        // Permet de ne pas rafraîchir la page sur le submit du form
         e.preventDefault();
 
         let username = this.state.fields.username;

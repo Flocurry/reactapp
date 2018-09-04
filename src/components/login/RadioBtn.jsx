@@ -9,10 +9,11 @@ class RadioBtn extends Component {
         }
     }
 
-    handleOptionChange(e) {
+    handleOptionChange(fieldName, e) {
         this.setState({
             selectedOption: e.target.value
         });
+        this.props.onChangeSexe(fieldName, e.target.value);
     }
 
     render() {
@@ -22,13 +23,13 @@ class RadioBtn extends Component {
                     <label>
                         <input type="radio" value="Homme"
                             checked={this.state.selectedOption === 'Homme'}
-                            onChange={(e) => this.handleOptionChange(e)} />
+                            onChange={(e) => this.handleOptionChange('sexe', e)} />
                         Homme
                     </label>
                     <label>
                         <input id='radioFemme' type="radio" value="Femme"
                             checked={this.state.selectedOption === 'Femme'}
-                            onChange={(e) => this.handleOptionChange(e)} />
+                            onChange={(e) => this.handleOptionChange('sexe', e)} />
                         Femme
                     </label>
                 </div>
