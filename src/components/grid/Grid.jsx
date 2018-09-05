@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { array } from 'prop-types';
+import axios from 'axios';
 
 class Grid extends Component {
 
@@ -9,6 +10,11 @@ class Grid extends Component {
 
     static defaultProps = {
         users: []
+    }
+
+    deleteUser(userId, e) {
+        e.preventDefault();
+        this.props.deleteUser(userId, e);
     }
 
     render() {
@@ -33,7 +39,9 @@ class Grid extends Component {
                                 return ([
                                     <tr key={index}>
                                         <td align="center">
-                                            <button className="btn btn-danger">
+                                            <button className="btn btn-danger"
+                                                hidden={user.is_connected}
+                                                onClick={(e) => this.deleteUser(user.user_id, e)}>
                                                 <em className="fa fa-trash"></em>
                                             </button>
                                         </td>

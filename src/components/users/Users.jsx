@@ -10,7 +10,8 @@ class Users extends Component {
         super();
         this.state = {
             users: [],
-            isLoaded: false
+            isLoaded: false,
+            userDeleted: false
         }
     }
 
@@ -30,6 +31,48 @@ class Users extends Component {
         }).catch(function (error) {
             console.log(error);
         });
+    }
+
+    // Appelée une fois que l'on clique sur la corbeille du deleteUser
+    componentWillUpdate() {
+        let req = {
+            url: 'http://localhost/users',
+            method: 'GET',
+            withCredentials: true,
+            credentials: 'same-origin'
+        }
+        // Arrow function permet d'avoir le this dans le callBack
+        axios(req).then(response => {
+            this.setState({
+                users: response.data,
+                isLoaded: true
+            });
+        }).catch(function (error) {
+            console.log(error);
+        });
+    }
+
+    deleteUser(userId, e) {
+        e.preventDefault();
+        // this.setState({});
+        let req = {
+            url: 'http://localhost/users/delete/' + userId,
+            method: 'DELETE',
+            withCredentials: true,
+            credentials: 'same-origin',
+        }
+        // Arrow function permet d'avoir le this dans le callBack
+        axios(req).then(response => {
+            let userDeleted = response.data.successDelete;
+            // On change l'état du composant que si il est toujours dans le DOM
+            // (Erreur de Login)
+            this.setState({
+                userDeleted: userDeleted
+            });
+        }).catch(function (error) {
+            console.log(error);
+        });
+
     }
 
     render() {
@@ -55,7 +98,9 @@ class Users extends Component {
                                         </div>
                                     </div>
                                 </div>
-                                <Grid users={this.state.users} />
+                                <Grid
+                                    users={this.state.users}
+                                    deleteUser={(userId, e) => this.deleteUser(userId, e)} />
                                 <div className="panel-footer">
                                     <Paginator />
                                 </div>
