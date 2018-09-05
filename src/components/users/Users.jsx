@@ -54,7 +54,6 @@ class Users extends Component {
 
     deleteUser(userId, e) {
         e.preventDefault();
-        // this.setState({});
         let req = {
             url: 'http://localhost/users/delete/' + userId,
             method: 'DELETE',
@@ -64,8 +63,6 @@ class Users extends Component {
         // Arrow function permet d'avoir le this dans le callBack
         axios(req).then(response => {
             let userDeleted = response.data.successDelete;
-            // On change l'état du composant que si il est toujours dans le DOM
-            // (Erreur de Login)
             this.setState({
                 userDeleted: userDeleted
             });

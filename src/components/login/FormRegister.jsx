@@ -41,10 +41,9 @@ class FormRegister extends Component {
             let selectedFile = e.target.files[0];
             fields[fieldName] = selectedFile;
             const reader = new FileReader();
-            let self = this;
-            reader.onload = function (r) {
-                self.setState({
-                    imageSrc: r.target.result,
+            reader.onload = (e) => {
+                this.setState({
+                    imageSrc: e.target.result,
                 });
             }
             reader.readAsDataURL(selectedFile);
@@ -57,13 +56,13 @@ class FormRegister extends Component {
     }
 
     deleteFile(e) {
+        e.preventDefault()
         this.setState({
             fileIsUpload: false,
             imageSrc: null,
             formIsValid: false
         });
         document.getElementById('fileInput').value = '';
-
     }
 
     componentDidMount() {
@@ -170,7 +169,7 @@ class FormRegister extends Component {
         });
     }
 
-    onChangeRole(fieldName, value, e) {
+    onChangeRole(fieldName, value) {
         let fields = this.state.fields;
         fields[fieldName] = value;
         this.setState({
@@ -178,7 +177,7 @@ class FormRegister extends Component {
         });
     }
 
-    onChangeSexe(fieldName, value, e) {
+    onChangeSexe(fieldName, value) {
         let fields = this.state.fields;
         fields[fieldName] = value;
         this.setState({

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { array } from 'prop-types';
-import axios from 'axios';
 
 class Grid extends Component {
 

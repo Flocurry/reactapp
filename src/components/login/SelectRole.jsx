@@ -11,7 +11,7 @@ class SelectRole extends Component {
         datas: []
     }
 
-    changeHandler(fieldName, e) {
+    changeHandler(fieldName) {
         this.props.onChangeRole(fieldName, document.getElementById('selectRole').value);
     }
 
@@ -23,7 +23,7 @@ class SelectRole extends Component {
                         <div className="input-group-text"><i className="fa fa-user-circle text-info"></i></div>
                     </div>
                     <select id="selectRole"
-                        onChange={(e) => this.changeHandler('role_id', e)} className="form-control input-lg">
+                        onChange={() => this.changeHandler('role_id')} className="form-control input-lg">
                         {this.props.datas.map((role, index) => {
                             return ([
                                 <option key={role.role_id} value={role.role_id}>
