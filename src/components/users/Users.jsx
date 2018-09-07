@@ -74,7 +74,7 @@ class Users extends Component {
 
         // create an array of pages to ng-repeat in the pager control
         let pages = Array.from(Array((endPage + 1) - startPage).keys()).map(i => startPage + i);
-        
+
         // return object with all pager properties required by the view
         return {
             totalItems: totalItems,
@@ -100,8 +100,12 @@ class Users extends Component {
         // Arrow function permet d'avoir le this dans le callBack
         axios(req).then(response => {
             // On supprime le user du state
+            let users = this.state.users.filter(el => el.user_id !== userId);
+            let pager = this.getPager(users.length, this.state.currentPage, 5);
             this.setState({
-                users: this.state.users.filter(el => el.user_id !== userId)
+                users: users,
+                pager: pager,
+                pagedItems: users.slice(pager.startIndex, pager.endIndex + 1),
             });
         }).catch(function (error) {
             console.log(error);
@@ -112,7 +116,7 @@ class Users extends Component {
     changePage(page) {
         let pager = this.getPager(this.state.users.length, page, 5);
         this.setState({
-            users: this.state.users,
+            currentPage: page,
             pager: pager,
             pagedItems: this.state.users.slice(pager.startIndex, pager.endIndex + 1),
         });
