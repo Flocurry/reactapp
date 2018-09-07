@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import NavBarBtn from './NavBarBtn';
+import Input from '../register/Input';
 
 class FormLogin extends Component {
 
@@ -13,7 +14,7 @@ class FormLogin extends Component {
         }
     }
 
-    handleChange(fieldName, e) {
+    handleChange(fieldName, checkEmpty, checkLength, checkPattern, e) {
         let fields = this.state.fields;
         fields[fieldName] = e.target.value;
         this.setState({
@@ -36,7 +37,7 @@ class FormLogin extends Component {
         // Arrow function permet d'avoir le this dans le callBack
         axios(req).then(response => {
             let userExists = false;
-            if (response.data.length === 1) {
+            if (response.data.length > 0) {
                 userExists = true;
                 // setter
                 localStorage.setItem('userLogged', JSON.stringify(response.data[0]));
@@ -79,24 +80,15 @@ class FormLogin extends Component {
                                     <strong>Success!</strong> The user exists.
                                 </div>
                                 <fieldset>
-                                    <div className="form-group row">
-                                        <div className="input-group offset-sm-2 col-sm-8">
-                                            <div className="input-group-prepend">
-                                                <div className="input-group-text"><i className="fa fa-user text-info"></i></div>
-                                            </div>
-                                            <input name="username" type="text" className="form-control" placeholder="username"
-                                                onChange={(e) => this.handleChange('username', e)} />
-                                        </div>
-                                    </div>
-                                    <div className="form-group row">
-                                        <div className="input-group offset-sm-2 col-sm-8">
-                                            <div className="input-group-prepend">
-                                                <div className="input-group-text"><i className="fa fa-lock text-info"></i></div>
-                                            </div>
-                                            <input name="password" type="password" className="form-control" placeholder="password"
-                                                onChange={(e) => this.handleChange('password', e)} />
-                                        </div>
-                                    </div>
+                                    <Input
+                                        name='username'
+                                        faIcon='fa fa-user text-info'
+                                        handleChange={(fieldName, checkEmpty, checkLength, checkPattern, e) => this.handleChange(fieldName, checkEmpty, checkLength, checkPattern, e)} />
+                                    <Input
+                                        name='password'
+                                        type='password'
+                                        faIcon='fa fa-lock text-info'
+                                        handleChange={(fieldName, checkEmpty, checkLength, checkPattern, e) => this.handleChange(fieldName, checkEmpty, checkLength, checkPattern, e)} />
                                     <div className="form-group row">
                                         <div className="offset-sm-2 col-sm-8 pb-3 pt-2">
                                             <button type="submit" className="btn btn-secondary-outline btn-lg btn-block">Login</button>

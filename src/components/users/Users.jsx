@@ -35,21 +35,25 @@ class Users extends Component {
 
     // Appelée une fois que l'on clique sur la corbeille du deleteUser
     componentWillUpdate() {
-        let req = {
-            url: 'http://localhost/users',
-            method: 'GET',
-            withCredentials: true,
-            credentials: 'same-origin'
-        }
-        // Arrow function permet d'avoir le this dans le callBack
-        axios(req).then(response => {
-            this.setState({
-                users: response.data,
-                isLoaded: true
-            });
-        }).catch(function (error) {
-            console.log(error);
-        });
+        // this.setState({
+        //     // users: response.data,
+        //     isLoaded: true
+        // });
+        // let req = {
+        //     url: 'http://localhost/users',
+        //     method: 'GET',
+        //     withCredentials: true,
+        //     credentials: 'same-origin'
+        // }
+        // // Arrow function permet d'avoir le this dans le callBack
+        // axios(req).then(response => {
+        //     this.setState({
+        //         users: response.data,
+        //         isLoaded: true
+        //     });
+        // }).catch(function (error) {
+        //     console.log(error);
+        // });
     }
 
     deleteUser(userId, e) {

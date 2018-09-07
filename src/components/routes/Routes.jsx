@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import FormLogin from '../login/FormLogin';
-import FormRegister from '../login/FormRegister';
+import FormRegister from '../register/FormRegister';
 import Home from '../home/Home';
 import Users from '../users/Users';
 import Roles from '../roles/Roles';
