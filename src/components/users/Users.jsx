@@ -11,7 +11,6 @@ class Users extends Component {
         this.state = {
             users: [],
             isLoaded: false,
-            userDeleted: false
         }
     }
 
@@ -33,29 +32,6 @@ class Users extends Component {
         });
     }
 
-    // Appelée une fois que l'on clique sur la corbeille du deleteUser
-    componentWillUpdate() {
-        // this.setState({
-        //     // users: response.data,
-        //     isLoaded: true
-        // });
-        // let req = {
-        //     url: 'http://localhost/users',
-        //     method: 'GET',
-        //     withCredentials: true,
-        //     credentials: 'same-origin'
-        // }
-        // // Arrow function permet d'avoir le this dans le callBack
-        // axios(req).then(response => {
-        //     this.setState({
-        //         users: response.data,
-        //         isLoaded: true
-        //     });
-        // }).catch(function (error) {
-        //     console.log(error);
-        // });
-    }
-
     deleteUser(userId, e) {
         e.preventDefault();
         let req = {
@@ -66,9 +42,9 @@ class Users extends Component {
         }
         // Arrow function permet d'avoir le this dans le callBack
         axios(req).then(response => {
-            let userDeleted = response.data.successDelete;
+            // On supprime le user du state
             this.setState({
-                userDeleted: userDeleted
+                users: this.state.users.filter(el => el.user_id !== userId)
             });
         }).catch(function (error) {
             console.log(error);

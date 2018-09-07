@@ -11,11 +11,6 @@ class Grid extends Component {
         users: []
     }
 
-    deleteUser(userId, e) {
-        e.preventDefault();
-        this.props.deleteUser(userId, e);
-    }
-
     render() {
         return (
             <div className="panel-body">
@@ -40,7 +35,7 @@ class Grid extends Component {
                                         <td align="center">
                                             <button className="btn btn-danger"
                                                 hidden={user.is_connected}
-                                                onClick={(e) => this.deleteUser(user.user_id, e)}>
+                                                onClick={(e) => this.props.deleteUser(user.user_id, e)}>
                                                 <em className="fa fa-trash"></em>
                                             </button>
                                         </td>
