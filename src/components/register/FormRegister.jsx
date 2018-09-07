@@ -187,6 +187,8 @@ class FormRegister extends Component {
         // Arrow function permet d'avoir le this dans le callBack
         axios(req).then(response => {
             let userAdded = response.data.successAdd;
+            // On reset le form
+            document.forms[0].reset();
             // On change l'état du composant que si il est toujours dans le DOM
             // (Erreur de Login)
             this.setState({
@@ -209,7 +211,8 @@ class FormRegister extends Component {
                                 <img src={this.state.imageSrc || 'https://bluecowsoftware.com/wp-content/uploads/2016/10/05-512.png'} alt="Test" />
                             </div>
                             <h3 className="text-center mb-4">Register</h3>
-                            <form onSubmit={(e) => this.onSubmitForm(e)} >
+                            <form
+                                onSubmit={(e) => this.onSubmitForm(e)} >
                                 <div hidden={!this.state.userAdded || !this.state.registerIsClicked} className="alert alert-success">
                                     <strong>Success!</strong> The user has been created.
                                 </div>
