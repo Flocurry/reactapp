@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import NavBarApp from '../navbar/NavBarApp';
-import Grid from '../grid/Grid';
 import Paginator from '../grid/Paginator';
+import GridUsers from '../grid/Grid';
 
 class Users extends Component {
 
@@ -145,7 +145,7 @@ class Users extends Component {
                                         </div>
                                     </div>
                                 </div>
-                                <Grid
+                                <GridUsers
                                     users={this.state.pagedItems}
                                     deleteUser={(userId, e) => this.deleteUser(userId, e)} />
                                 <div className="panel-footer">

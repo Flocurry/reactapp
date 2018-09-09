@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { array } from 'prop-types';
 
-class GridUsers extends Component {
+class GridRoles extends Component {
 
     static propTypes = {
-        users: array.isRequired
+        roles: array.isRequired
     }
 
     static defaultProps = {
-        users: []
+        roles: []
     }
 
     render() {
@@ -21,36 +21,25 @@ class GridUsers extends Component {
                                 <th>
                                     <em className="fa fa-cog"></em>
                                 </th>
-                                <th>Image</th>
-                                <th>Firstname</th>
-                                <th>LastName</th>
-                                <th>Email</th>
-                                <th>Role</th>
+                                <th>Libellé</th>
+                                <th>Date creation</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {this.props.users.map((user, index) => {
+                            {this.props.roles.map((role, index) => {
                                 return ([
                                     <tr key={index}>
                                         <td align="center">
                                             <button className="btn btn-danger"
-                                                hidden={user.is_connected}
-                                                onClick={(e) => this.props.deleteUser(user.user_id, e)}>
+                                                onClick={(e) => this.props.deleteDatas(role.role_id, e)}>
                                                 <em className="fa fa-trash"></em>
                                             </button>
                                         </td>
-                                        <td><img src={user.image} alt={user.image} /></td>
                                         <td>
-                                            {user.firstname}
+                                            {role.libelle}
                                         </td>
                                         <td>
-                                            {user.lastname}
-                                        </td>
-                                        <td>
-                                            {user.email}
-                                        </td>
-                                        <td>
-                                            {user.libelle}
+                                            {role.date_creation}
                                         </td>
                                     </tr>
                                 ])
@@ -63,4 +52,4 @@ class GridUsers extends Component {
     }
 }
 
-export default GridUsers;
+export default GridRoles;

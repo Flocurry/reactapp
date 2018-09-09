@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { array } from 'prop-types';
 
-class GridUsers extends Component {
+class Grid extends Component {
 
     static propTypes = {
         users: array.isRequired
@@ -63,4 +63,4 @@ class GridUsers extends Component {
     }
 }
 
-export default GridUsers;
+export default Grid;
