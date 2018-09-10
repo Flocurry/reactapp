@@ -10,27 +10,25 @@ class Grid extends Component {
         componentName: string.isRequired
     }
 
+    renderGrid() {
+        switch (this.props.componentName) {
+            case 'Users':
+                return <GridUsers
+                    datas={this.props.datas}
+                    componentName={this.props.componentName}
+                    deleteUser={(id, e) => this.props.deleteData(id, e)} />;
+            case 'Roles':
+                return <GridRoles
+                    datas={this.props.datas}
+                    componentName={this.props.componentName}
+                    deleteRole={(id, e) => this.props.deleteData(id, e)} />;
+            default:
+                return null;
+        }
+    }
+
     render() {
-        if (this.props.componentName === 'Users') {
-            return (
-                <div>
-                    <GridUsers
-                        datas={this.props.datas}
-                        componentName={this.props.componentName}
-                        deleteData={(id, e) => this.props.deleteData(id, e)} />
-                </div>
-            );
-        }
-        if (this.props.componentName === 'Roles') {
-            return (
-                <div>
-                    <GridRoles
-                        datas={this.props.datas}
-                        componentName={this.props.componentName}
-                        deleteData={(id, e) => this.props.deleteData(id, e)} />
-                </div>
-            );
-        }
+        return this.renderGrid()
     }
 }
 

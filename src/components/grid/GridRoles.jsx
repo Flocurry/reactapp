@@ -31,7 +31,7 @@ class GridRoles extends Component {
                                     <tr key={index}>
                                         <td align="center">
                                             <button className="btn btn-danger"
-                                                onClick={(e) => this.props.deleteData(role.role_id, e)}>
+                                                onClick={(e) => this.props.deleteRole(role.role_id, e)}>
                                                 <em className="fa fa-trash"></em>
                                             </button>
                                         </td>
