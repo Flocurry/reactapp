@@ -4,11 +4,11 @@ import { array } from 'prop-types';
 class GridRoles extends Component {
 
     static propTypes = {
-        roles: array.isRequired
+        datas: array.isRequired
     }
 
     static defaultProps = {
-        roles: []
+        datas: []
     }
 
     render() {
@@ -26,12 +26,12 @@ class GridRoles extends Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {this.props.roles.map((role, index) => {
+                            {this.props.datas.map((role, index) => {
                                 return ([
                                     <tr key={index}>
                                         <td align="center">
                                             <button className="btn btn-danger"
-                                                onClick={(e) => this.props.deleteDatas(role.role_id, e)}>
+                                                onClick={(e) => this.props.deleteData(role.role_id, e)}>
                                                 <em className="fa fa-trash"></em>
                                             </button>
                                         </td>

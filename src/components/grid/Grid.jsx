@@ -1,66 +1,37 @@
 import React, { Component } from 'react';
-import { array } from 'prop-types';
+import { array, string } from 'prop-types';
+import GridUsers from './GridUsers';
+import GridRoles from './GridRoles';
 
-class GridUsers extends Component {
+class Grid extends Component {
 
     static propTypes = {
-        users: array.isRequired
-    }
-
-    static defaultProps = {
-        users: []
+        datas: array.isRequired,
+        componentName: string.isRequired
     }
 
     render() {
-        return (
-            <div className="panel-body">
+        if (this.props.componentName === 'Users') {
+            return (
                 <div>
-                    <table className="table table-striped table-bordered table-list">
-                        <thead>
-                            <tr>
-                                <th>
-                                    <em className="fa fa-cog"></em>
-                                </th>
-                                <th>Image</th>
-                                <th>Firstname</th>
-                                <th>LastName</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {this.props.users.map((user, index) => {
-                                return ([
-                                    <tr key={index}>
-                                        <td align="center">
-                                            <button className="btn btn-danger"
-                                                hidden={user.is_connected}
-                                                onClick={(e) => this.props.deleteUser(user.user_id, e)}>
-                                                <em className="fa fa-trash"></em>
-                                            </button>
-                                        </td>
-                                        <td><img src={user.image} alt={user.image} /></td>
-                                        <td>
-                                            {user.firstname}
-                                        </td>
-                                        <td>
-                                            {user.lastname}
-                                        </td>
-                                        <td>
-                                            {user.email}
-                                        </td>
-                                        <td>
-                                            {user.libelle}
-                                        </td>
-                                    </tr>
-                                ])
-                            })}
-                        </tbody>
-                    </table>
+                    <GridUsers
+                        datas={this.props.datas}
+                        componentName={this.props.componentName}
+                        deleteData={(id, e) => this.props.deleteData(id, e)} />
                 </div>
-            </div>
-        );
+            );
+        }
+        if (this.props.componentName === 'Roles') {
+            return (
+                <div>
+                    <GridRoles
+                        datas={this.props.datas}
+                        componentName={this.props.componentName}
+                        deleteData={(id, e) => this.props.deleteData(id, e)} />
+                </div>
+            );
+        }
     }
 }
 
-export default GridUsers;
+export default Grid;

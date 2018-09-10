@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { array } from 'prop-types';
 
-class Grid extends Component {
+class GridUsers extends Component {
 
     static propTypes = {
-        users: array.isRequired
+        datas: array.isRequired
     }
 
     static defaultProps = {
-        users: []
+        datas: []
     }
 
     render() {
@@ -29,7 +29,7 @@ class Grid extends Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {this.props.users.map((user, index) => {
+                            {this.props.datas.map((user, index) => {
                                 return ([
                                     <tr key={index}>
                                         <td align="center">
@@ -63,4 +63,4 @@ class Grid extends Component {
     }
 }
 
-export default Grid;
+export default GridUsers;
