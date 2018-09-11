@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { array, string } from 'prop-types';
-import GridUsers from './GridUsers';
-import GridRoles from './GridRoles';
+import GridUsers from '../users/GridUsers';
+import GridRoles from '../roles/GridRoles';
 
 class Grid extends Component {
 

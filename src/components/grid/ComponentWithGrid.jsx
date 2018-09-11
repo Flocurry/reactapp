@@ -136,8 +136,8 @@ class ComponentWithGrid extends Component {
     }
 
     render() {
-        var isLoaded = this.state.isLoaded;
-        if (!isLoaded) {
+        let createNew = this.props.componentName === 'Roles';
+        if (!this.state.isLoaded) {
             return (
                 <div>
                     Loading...
@@ -154,7 +154,12 @@ class ComponentWithGrid extends Component {
                                 <div className="panel-heading">
                                     <div className="row">
                                         <div className="col col-xs-6">
-                                            <h3 className="panel-title">Users</h3>
+                                            <h3 className="panel-title">{this.props.componentName}</h3>
+                                        </div>
+                                        <div hidden={!createNew} className="col col-xs-6 text-right">
+                                            <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#idModal">
+                                                Create New
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
