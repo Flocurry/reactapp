@@ -30,6 +30,10 @@ class GridRoles extends Component {
                                 return ([
                                     <tr key={index}>
                                         <td align="center">
+                                            <a className="btn btn-default"
+                                                onClick={() => this.props.onShow('edit')}>
+                                                <em className="fa fa-pencil"></em>
+                                            </a>
                                             <button className="btn btn-danger"
                                                 onClick={(e) => this.props.deleteRole(role.role_id, e)}>
                                                 <em className="fa fa-trash"></em>

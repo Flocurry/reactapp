@@ -21,7 +21,8 @@ class Grid extends Component {
                 return <GridRoles
                     datas={this.props.datas}
                     componentName={this.props.componentName}
-                    deleteRole={(id, e) => this.props.deleteData(id, e)} />;
+                    deleteRole={(id, e) => this.props.deleteData(id, e)} 
+                    onShow={(action) => this.props.onShow(action)}/>;
             default:
                 return null;
         }

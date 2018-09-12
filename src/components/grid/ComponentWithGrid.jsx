@@ -4,6 +4,7 @@ import { string } from 'prop-types';
 import NavBarApp from '../navbar/NavBarApp';
 import Paginator from '../grid/Paginator';
 import Grid from './Grid';
+import ModalParent from '../modal/ModalParent';
 
 class ComponentWithGrid extends Component {
 
@@ -22,6 +23,8 @@ class ComponentWithGrid extends Component {
             pager: {},
             pagedItems: [],
             isLoaded: false,
+            isModalOpen: false,
+            titleModal: ''
         }
     }
 
@@ -135,6 +138,30 @@ class ComponentWithGrid extends Component {
         });
     }
 
+    toggleModal() {
+        this.setState({
+            isModalOpen: !this.state.isModalOpen
+        });
+    }
+
+    showModal(action) {
+        let titleModal = this.state.titleModal;
+        switch (action) {
+            case 'create':
+                titleModal = 'New role';
+                break;
+            case 'edit':
+                titleModal = 'Edit role';
+                break;
+            default:
+                return '';
+        }
+        this.setState({
+            isModalOpen: true,
+            titleModal: titleModal
+        });
+    }
+
     render() {
         let createNew = this.props.componentName === 'Roles';
         if (!this.state.isLoaded) {
@@ -157,7 +184,8 @@ class ComponentWithGrid extends Component {
                                             <h3 className="panel-title">{this.props.componentName}</h3>
                                         </div>
                                         <div hidden={!createNew} className="col col-xs-6 text-right">
-                                            <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#idModal">
+                                            <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#idModal"
+                                                onClick={() => this.showModal('create')}>
                                                 Create New
                                             </button>
                                         </div>
@@ -166,12 +194,17 @@ class ComponentWithGrid extends Component {
                                 <Grid
                                     datas={this.state.pagedItems}
                                     componentName={this.props.componentName}
-                                    deleteData={(id, e) => this.deleteData(id, e)} />
+                                    deleteData={(id, e) => this.deleteData(id, e)}
+                                    onShow={(action) => this.showModal(action)} />
                                 <div className="panel-footer">
                                     <Paginator
                                         pager={this.state.pager}
                                         changePage={(page, e) => this.changePage(page, e)} />
                                 </div>
+                                <ModalParent
+                                    title={this.state.titleModal}
+                                    show={this.state.isModalOpen}
+                                    onClose={() => this.toggleModal()} />
                             </div>
                         </div>
                     </div>
