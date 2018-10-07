@@ -1,107 +1,156 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import NavBarBtn from './NavBarBtn';
-import Input from '../register/Input';
+// Material Core
+import CssBaseline from '@material-ui/core/CssBaseline';
+import InputAdornment from '@material-ui/core/InputAdornment'
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import IconButton from '@material-ui/core/IconButton';
+// Material Icons
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
+// CSS
+import { withStyles } from '@material-ui/core/styles';
+
+const styles = theme => ({
+    form: {
+        marginTop: theme.spacing.unit * 4
+    },
+    containerBtn: {
+        marginTop: theme.spacing.unit * 4,
+        textAlign: "center"
+    },
+    errorText: {
+        marginTop: theme.spacing.unit * 3,
+        fontSize: 12,
+        color: 'red',
+        textAlign: 'center'
+    }
+});
 
 class FormLogin extends Component {
 
-    constructor(props) {
-        super(props);
-        this.isUnMounted = false;
-        this.state = {
-            fields: {},
-            isLoginClicked: {}
-        }
-    }
+    state = {
+        showPassword: false,
+        fields: {},
+        userExists: false,
+        isLoginClicked: false
+    };
 
-    handleChange(fieldName, checkEmpty, checkLength, checkPattern, e) {
+    handleClickShowPassword = () => {
+        this.setState({
+            showPassword: !this.state.showPassword
+        });
+    };
+
+    handleChange(event, fieldName) {
         let fields = this.state.fields;
-        fields[fieldName] = e.target.value;
+        fields[fieldName] = event.target.value;
         this.setState({
             fields: fields
         });
+        console.log(this.state.fields);
     }
 
     handleSubmit(e) {
         // Permet de ne pas rafraîchir la page sur le submit du form
         e.preventDefault();
-
-        let username = this.state.fields.username;
-        let password = this.state.fields.password;
-        let req = {
-            url: 'http://localhost/login/user?username=' + username + '&password=' + password,
-            method: 'GET',
-            withCredentials: true,
-            credentials: 'same-origin'
-        }
-        // Arrow function permet d'avoir le this dans le callBack
-        axios(req).then(response => {
-            let userExists = false;
-            if (response.data.length > 0) {
-                userExists = true;
-                // setter
-                localStorage.setItem('userLogged', JSON.stringify(response.data[0]));
-                this.props.history.push('/home');
-            }
-            // On change l'état du composant que si il est toujours dans le DOM
-            // (Erreur de Login)
-            if (!this.isUnMounted) {
-                this.setState({
-                    isLoginClicked: {
-                        userExists: userExists
-                    }
-                });
-            }
-        }).catch(function (error) {
-            console.log(error);
+        this.setState({
+            userExists: false,
+            isLoginClicked: true
         });
-    }
-
-    // Méthode appelé juste avant que le composant soit démonté et détruit du DOM
-    componentWillUnmount() {
-        this.isUnMounted = true;
+        // let username = this.state.fields.username;
+        // let password = this.state.fields.password;
+        // let req = {
+        //     url: 'http://localhost/login/user?username=' + username + '&password=' + password,
+        //     method: 'GET',
+        //     withCredentials: true,
+        //     credentials: 'same-origin'
+        // }
+        // // Arrow function permet d'avoir le this dans le callBack
+        // axios(req).then(response => {
+        //     let userExists = false;
+        //     if (response.data.length > 0) {
+        //         userExists = true;
+        //         // setter
+        //         localStorage.setItem('userLogged', JSON.stringify(response.data[0]));
+        //         this.props.history.push('/home');
+        //     }
+        //     // On change l'état du composant que si il est toujours dans le DOM
+        //     // (Erreur de Login)
+        //     if (!this.isUnMounted) {
+        //         this.setState({
+        //             isLoginClicked: {
+        //                 userExists: userExists
+        //             }
+        //         });
+        //     }
+        // }).catch(function (error) {
+        //     console.log(error);
+        // });
     }
 
     render() {
+        const classes = this.props.classes;
         return (
-            <div className="container-fluid bg-light py-3">
-                <NavBarBtn />
-                <div className="row">
-                    <div className="col-md-6 mx-auto">
-                        <div className="card card-body">
-                            <h3 className="text-center mb-4">Login</h3>
-                            <form
-                                // This syntax ensures `this` is bound within handleClick
-                                onSubmit={(e) => this.handleSubmit(e)}>
-                                <div hidden={!('userExists' in this.state.isLoginClicked) || this.state.isLoginClicked.userExists} className="alert alert-danger">
-                                    <strong>Fail!</strong> The user doesn't exist.
-                                </div>
-                                <div hidden={!this.state.isLoginClicked.userExists} className="alert alert-success">
-                                    <strong>Success!</strong> The user exists.
-                                </div>
-                                <fieldset>
-                                    <Input
-                                        name='username'
-                                        faIcon='fa fa-user text-info'
-                                        handleChange={(fieldName, checkEmpty, checkLength, checkPattern, e) => this.handleChange(fieldName, checkEmpty, checkLength, checkPattern, e)} />
-                                    <Input
-                                        name='password'
-                                        type='password'
-                                        faIcon='fa fa-lock text-info'
-                                        handleChange={(fieldName, checkEmpty, checkLength, checkPattern, e) => this.handleChange(fieldName, checkEmpty, checkLength, checkPattern, e)} />
-                                    <div className="form-group row">
-                                        <div className="offset-sm-2 col-sm-8 pb-3 pt-2">
-                                            <button type="submit" className="btn btn-secondary-outline btn-lg btn-block">Login</button>
-                                        </div>
-                                    </div>
-                                </fieldset>
-                            </form>
-                        </div>
+            <React.Fragment>
+                <CssBaseline />
+                <form
+                    className={classes.form}
+                    // This syntax ensures `this` is bound within handleClick
+                    onSubmit={(e) => this.handleSubmit(e)}>
+                    <TextField
+                        fullWidth
+                        autoFocus
+                        margin="normal"
+                        label="Username"
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <AccountCircle />
+                                </InputAdornment>
+                            ),
+                        }}
+                        error={!this.state.userExists && this.state.isLoginClicked}
+                        onChange={(event) => this.handleChange(event, 'username')}
+                    />
+                    <TextField
+                        fullWidth
+                        margin="normal"
+                        type={this.state.showPassword ? 'text' : 'password'}
+                        label="Password"
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <IconButton
+                                        aria-label="Toggle password visibility"
+                                        onClick={this.handleClickShowPassword}>
+                                        {this.state.showPassword ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
+                        error={!this.state.userExists && this.state.isLoginClicked}
+                        onChange={(event) => this.handleChange(event, 'password')}
+                    />
+                    <div
+                        className={classes.errorText}
+                        hidden={this.state.userExists || !this.state.isLoginClicked}>
+                        Incorrect username and/or password.
                     </div>
-                </div>
-            </div>
+                    <div className={classes.containerBtn}>
+                        <Button
+                            type="submit"
+                            variant="raised"
+                            color="primary">
+                            Login
+                            </Button>
+                    </div>
+                </form>
+            </React.Fragment >
         );
     }
 }
 
-export default FormLogin;
+export default withStyles(styles)(FormLogin);

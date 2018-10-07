@@ -1,297 +1,149 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-// Components
-import NavBarBtn from '../login/NavBarBtn';
-import RadioBtn from './RadioBtn';
-import SelectRole from './SelectRole';
-import UploadFile from './UploadFile';
-import Input from './Input';
+import PropTypes from 'prop-types';
+// Material Core
+import CssBaseline from '@material-ui/core/CssBaseline';
+import InputAdornment from '@material-ui/core/InputAdornment'
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import IconButton from '@material-ui/core/IconButton';
+// Material Icons
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
 // CSS
-import './FormRegister.css';
+import { withStyles } from '@material-ui/core/styles';
+
+const styles = theme => ({
+    form: {
+        marginTop: theme.spacing.unit * 4
+    },
+    containerBtn: {
+        marginTop: theme.spacing.unit * 4,
+        textAlign: "center"
+    },
+    errorText: {
+        marginTop: theme.spacing.unit * 3,
+        fontSize: 12,
+        color: 'red',
+        textAlign: 'center'
+    }
+});
 
 class FormRegister extends Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            imageSrc: null,
-            allInputState: {
-                username: false,
-                firstname: false,
-                lastname: false,
-                password: false,
-                image: false
-            },
-            fields: {
-                role_id: 1,
-                sexe: 'Homme'
-            },
-            errors: {},
-            roles: [],
-            touched: {},
-            formIsValid: false,
-            userAdded: false,
-            registerIsClicked: false
-        }
-    }
+  state = {
+    showPassword: false,
+    fields: {},
+    userExists: false,
+    isRegisterClicked: false
+  };
 
-    onFileChanged(fieldName, e) {
-        let fields = this.state.fields;
-        let allInputState = this.state.allInputState;
-        let formIsValid = this.state.formIsValid;
-        if (e.target.files && e.target.files[0]) {
-            let selectedFile = e.target.files[0];
-            fields[fieldName] = selectedFile;
-            allInputState[fieldName] = true;
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                this.setState({
-                    imageSrc: e.target.result,
-                });
-            }
-            reader.readAsDataURL(selectedFile);
-            let arrAllInputState = Object.keys(this.state.allInputState).map((keyName) => {
-                let ret = true;
-                if (this.state.allInputState[keyName] === false) {
-                    ret = false;
-                }
-                return ret;
-            });
+  handleClickShowPassword = () => {
+    this.setState({
+      showPassword: !this.state.showPassword
+    });
+  };
 
-            formIsValid = !(arrAllInputState.indexOf(false) > -1);
+  handleSubmit(e) {
+    // Permet de ne pas rafraîchir la page sur le submit du form
+    e.preventDefault();
+    this.setState({
+      userExists: false,
+      isRegisterClicked: true
+    });
+    // let username = this.state.fields.username;
+    // let password = this.state.fields.password;
+    // let req = {
+    //     url: 'http://localhost/login/user?username=' + username + '&password=' + password,
+    //     method: 'GET',
+    //     withCredentials: true,
+    //     credentials: 'same-origin'
+    // }
+    // // Arrow function permet d'avoir le this dans le callBack
+    // axios(req).then(response => {
+    //     let userExists = false;
+    //     if (response.data.length > 0) {
+    //         userExists = true;
+    //         // setter
+    //         localStorage.setItem('userLogged', JSON.stringify(response.data[0]));
+    //         this.props.history.push('/home');
+    //     }
+    //     // On change l'état du composant que si il est toujours dans le DOM
+    //     // (Erreur de Login)
+    //     if (!this.isUnMounted) {
+    //         this.setState({
+    //             isRegisterClicked: {
+    //                 userExists: userExists
+    //             }
+    //         });
+    //     }
+    // }).catch(function (error) {
+    //     console.log(error);
+    // });
+  }
 
-            this.setState({
-                imageSrc: reader,
-                formIsValid: formIsValid
-            });
-        }
-    }
-
-    deleteFile(e) {
-        e.preventDefault()
-        this.setState({
-            imageSrc: null,
-            formIsValid: false
-        });
-        document.getElementById('fileInput').value = '';
-    }
-
-    componentDidMount() {
-        let req = {
-            url: 'http://localhost/roles',
-            method: 'GET',
-            withCredentials: true,
-            credentials: 'same-origin'
-        }
-        // Arrow function permet d'avoir le this dans le callBack
-        axios(req).then(response => {
-            this.setState({
-                roles: response.data
-            });
-
-        }).catch(function (error) {
-            console.log(error);
-        });
-    }
-
-    handleChange(fieldName, checkEmpty, checkLength, checkPattern, e) {
-        let fields = this.state.fields;
-        let touched = this.state.touched;
-        let errors = this.state.errors;
-        let allInputState = this.state.allInputState;
-        let formIsValid = this.state.formIsValid;
-        fields[fieldName] = e.target.value;
-        touched[fieldName] = true;
-        errors[fieldName] = null;
-        allInputState[fieldName] = true;
-
-        if (checkPattern) {
-            // Validation email
-            let regexp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            // Valid adress
-            if (!regexp.test(fields['email'])) {
-                errors['email'] = fieldName + ' not valid.';
-            }
-        }
-        // Required
-        if (checkEmpty) {
-            if (!fields[fieldName]) {
-                errors[fieldName] = fieldName + ' is required.';
-                allInputState[fieldName] = false;
-            }
-        }
-        if (checkLength) {
-            // Length < 20
-            if (fields[fieldName].length > 20) {
-                errors[fieldName] = fieldName + ' is up by 20 characters.';
-                allInputState[fieldName] = false;
-            }
-        }
-
-
-        let arrAllInputState = Object.keys(this.state.allInputState).map((keyName) => {
-            let ret = true;
-            if (this.state.allInputState[keyName] === false) {
-                ret = false;
-            }
-            return ret;
-        });
-
-        formIsValid = !(arrAllInputState.indexOf(false) > -1);
-
-        this.setState({
-            fields: fields,
-            touched: touched,
-            errors: errors,
-            allInputState: allInputState,
-            formIsValid: formIsValid
-        });
-    }
-
-    onChangeRole(fieldName, value) {
-        let fields = this.state.fields;
-        fields[fieldName] = value;
-        this.setState({
-            fields: fields
-        });
-    }
-
-    onChangeSexe(fieldName, value) {
-        let fields = this.state.fields;
-        fields[fieldName] = value;
-        this.setState({
-            fields: fields
-        });
-    }
-
-    onSubmitForm(e) {
-        // Permet de ne pas rafraîchir la page sur le submit du form
-        e.preventDefault();
-        let _formData = new FormData();
-        _formData.append("username", this.state.fields['username']);
-        _formData.append("firstname", this.state.fields['firstname']);
-        _formData.append("lastname", this.state.fields['lastname']);
-        _formData.append("sexe", this.state.fields['sexe']);
-        _formData.append("email", this.state.fields['email']);
-        _formData.append("password", this.state.fields['password']);
-        _formData.append("image", this.state.fields['image']);
-        _formData.append("role_id", this.state.fields['role_id']);
-
-        let req = {
-            url: 'http://localhost/users/save',
-            method: 'POST',
-            data: _formData,
-            withCredentials: true,
-            credentials: 'same-origin',
-        }
-        // Arrow function permet d'avoir le this dans le callBack
-        axios(req).then(response => {
-            let userAdded = response.data.successAdd;
-            // On reset le form
-            document.forms[0].reset();
-            // On change l'état du composant que si il est toujours dans le DOM
-            // (Erreur de Login)
-            this.setState({
-                userAdded: userAdded,
-                registerIsClicked: true
-            });
-        }).catch(function (error) {
-            console.log(error);
-        });
-    }
-
-    render() {
-        return (
-            <div className="container-fluid bg-light py-3">
-                <NavBarBtn />
-                <div className="row">
-                    <div className="col-md-6 mx-auto">
-                        <div className="card card-body">
-                            <div className="wrapper">
-                                <img src={this.state.imageSrc || 'https://bluecowsoftware.com/wp-content/uploads/2016/10/05-512.png'} alt="Test" />
-                            </div>
-                            <h3 className="text-center mb-4">Register</h3>
-                            <form
-                                onSubmit={(e) => this.onSubmitForm(e)} >
-                                <div hidden={!this.state.userAdded || !this.state.registerIsClicked} className="alert alert-success">
-                                    <strong>Success!</strong> The user has been created.
-                                </div>
-                                <div hidden={this.state.userAdded || !this.state.registerIsClicked} className="alert alert-danger">
-                                    <strong>Fail!</strong> The user has not been created.
-                                 </div>
-                                <fieldset>
-                                    <Input
-                                        name='username'
-                                        type='text'
-                                        faIcon='fa fa-user text-info'
-                                        validation={true}
-                                        errors={this.state.errors}
-                                        touched={this.state.touched}
-                                        checkEmpty={true}
-                                        checkLength={true}
-                                        handleChange={(fieldName, checkEmpty, checkLength, checkPattern, e) => this.handleChange(fieldName, checkEmpty, checkLength, checkPattern, e)} />
-                                    <Input
-                                        name='firstname'
-                                        type='text'
-                                        faIcon='fa fa-user text-info'
-                                        validation={true}
-                                        errors={this.state.errors}
-                                        touched={this.state.touched}
-                                        checkEmpty={true}
-                                        checkLength={true}
-                                        handleChange={(fieldName, checkEmpty, checkLength, checkPattern, e) => this.handleChange(fieldName, checkEmpty, checkLength, checkPattern, e)} />
-                                    <Input
-                                        name='lastname'
-                                        type='text'
-                                        faIcon='fa fa-user text-info'
-                                        validation={true}
-                                        errors={this.state.errors}
-                                        touched={this.state.touched}
-                                        checkEmpty={true}
-                                        checkLength={true}
-                                        handleChange={(fieldName, checkEmpty, checkLength, checkPattern, e) => this.handleChange(fieldName, checkEmpty, checkLength, checkPattern, e)} />
-                                    <Input
-                                        name='email'
-                                        type='text'
-                                        faIcon='fa fa-envelope text-info'
-                                        validation={true}
-                                        errors={this.state.errors}
-                                        touched={this.state.touched}
-                                        checkEmpty={true}
-                                        checkPattern={true}
-                                        handleChange={(fieldName, checkEmpty, checkLength, checkPattern, e) => this.handleChange(fieldName, checkEmpty, checkLength, checkPattern, e)} />
-                                    <Input
-                                        name='password'
-                                        type='password'
-                                        faIcon='fa fa-lock text-info'
-                                        validation={true}
-                                        errors={this.state.errors}
-                                        touched={this.state.touched}
-                                        checkEmpty={true}
-                                        checkLength={true}
-                                        handleChange={(fieldName, checkEmpty, checkLength, checkPattern, e) => this.handleChange(fieldName, checkEmpty, checkLength, checkPattern, e)} />
-                                    <SelectRole
-                                        datas={this.state.roles}
-                                        onChangeRole={(fieldName, value) => this.onChangeRole(fieldName, value)} />
-                                    <RadioBtn
-                                        onChangeSexe={(fieldName, value, e) => this.onChangeSexe(fieldName, value, e)} />
-                                    <UploadFile
-                                        name='image'
-                                        change={(fieldName, e) => this.onFileChanged(fieldName, e)}
-                                        delete={(e) => this.deleteFile(e)} />
-                                    <div className="form-group row">
-                                        <div className="offset-sm-2 col-sm-8 pb-3 pt-2">
-                                            <button disabled={!this.state.formIsValid} type="submit" className="btn btn-secondary-outline btn-lg btn-block">Register</button>
-                                        </div>
-                                    </div>
-                                </fieldset>
-                            </form>
-                        </div>
-                    </div >
-                </div >
-            </div >
-        );
-    }
+  render() {
+    const classes = this.props.classes;
+    return (
+      <React.Fragment>
+        <CssBaseline />
+        <form
+          className={classes.form}
+          // This syntax ensures `this` is bound within handleClick
+          onSubmit={(e) => this.handleSubmit(e)}>
+          <TextField
+            fullWidth
+            autoFocus
+            margin="normal"
+            label="Username"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <AccountCircle />
+                </InputAdornment>
+              ),
+            }}
+            error={!this.state.userExists && this.state.isRegisterClicked}
+          />
+          <TextField
+            fullWidth
+            margin="normal"
+            type={this.state.showPassword ? 'text' : 'password'}
+            label="Password"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <IconButton
+                    aria-label="Toggle password visibility"
+                    onClick={this.handleClickShowPassword}>
+                    {this.state.showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            error={!this.state.userExists && this.state.isRegisterClicked}
+          />
+          <div
+            className={classes.errorText}
+            hidden={this.state.userExists || !this.state.isRegisterClicked}>
+            Incorrect username and/or password.
+                  </div>
+          <div className={classes.containerBtn}>
+            <Button
+              type="submit"
+              variant="raised"
+              color="primary">
+              Register
+            </Button>
+          </div>
+        </form>
+      </React.Fragment >
+    );
+  }
 }
 
-export default FormRegister;
+FormRegister.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles)(FormRegister);
