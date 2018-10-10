@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from "react-router-dom";
 import axios from 'axios';
 // Material Core
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -20,23 +21,31 @@ const styles = theme => ({
     containerBtn: {
         marginTop: theme.spacing.unit * 4,
         textAlign: "center"
-    },
-    errorText: {
-        marginTop: theme.spacing.unit * 3,
-        fontSize: 12,
-        color: 'red',
-        textAlign: 'center'
     }
 });
 
 class FormLogin extends Component {
 
-    state = {
-        showPassword: false,
-        fields: {},
-        userExists: false,
-        isLoginClicked: false
-    };
+    constructor(props) {
+        super(props);
+        this.isUnMounted = false;
+        let fields = {
+            username: {
+                value: null,
+                error: false
+            },
+            password: {
+                value: null,
+                error: false
+            }
+        };
+        this.state = {
+            showPassword: false,
+            fields: fields,
+            userExists: false,
+            isLoginClicked: false
+        };
+    }
 
     handleClickShowPassword = () => {
         this.setState({
@@ -46,49 +55,55 @@ class FormLogin extends Component {
 
     handleChange(event, fieldName) {
         let fields = this.state.fields;
-        fields[fieldName] = event.target.value;
+        fields[fieldName].value = event.target.value;
+        fields[fieldName].error = false;
         this.setState({
             fields: fields
         });
-        console.log(this.state.fields);
     }
 
     handleSubmit(e) {
         // Permet de ne pas rafraîchir la page sur le submit du form
         e.preventDefault();
-        this.setState({
-            userExists: false,
-            isLoginClicked: true
+        let username = this.state.fields.username;
+        let password = this.state.fields.password;
+        let fields = this.state.fields;
+        let req = {
+            url: 'http://127.0.0.1:8000/login/user?username=' + username + '&password=' + password,
+            method: 'GET',
+            withCredentials: true,
+            credentials: 'same-origin'
+        }
+        // Arrow function permet d'avoir le this dans le callBack
+        axios(req).then(response => {
+            let userExists = false;
+            if (response.data.length > 0) {
+                userExists = true;
+                // setter
+                localStorage.setItem('userLogged', JSON.stringify(response.data[0]));
+                this.props.history.push('/home');
+            }
+            if (!userExists) {
+                fields.username.error = true;
+                fields.password.error = true;
+            }
+            // On change l'état du composant que si il est toujours dans le DOM
+            // (Erreur de Login)
+            if (!this.isUnMounted) {
+                this.setState({
+                    fields: fields,
+                    userExists: userExists,
+                    isLoginClicked: true
+                });
+            }
+        }).catch(function (error) {
+            console.log(error);
         });
-        // let username = this.state.fields.username;
-        // let password = this.state.fields.password;
-        // let req = {
-        //     url: 'http://localhost/login/user?username=' + username + '&password=' + password,
-        //     method: 'GET',
-        //     withCredentials: true,
-        //     credentials: 'same-origin'
-        // }
-        // // Arrow function permet d'avoir le this dans le callBack
-        // axios(req).then(response => {
-        //     let userExists = false;
-        //     if (response.data.length > 0) {
-        //         userExists = true;
-        //         // setter
-        //         localStorage.setItem('userLogged', JSON.stringify(response.data[0]));
-        //         this.props.history.push('/home');
-        //     }
-        //     // On change l'état du composant que si il est toujours dans le DOM
-        //     // (Erreur de Login)
-        //     if (!this.isUnMounted) {
-        //         this.setState({
-        //             isLoginClicked: {
-        //                 userExists: userExists
-        //             }
-        //         });
-        //     }
-        // }).catch(function (error) {
-        //     console.log(error);
-        // });
+    }
+
+    // Méthode appelé juste avant que le composant soit démonté et détruit du DOM
+    componentWillUnmount() {
+        this.isUnMounted = true;
     }
 
     render() {
@@ -112,7 +127,8 @@ class FormLogin extends Component {
                                 </InputAdornment>
                             ),
                         }}
-                        error={!this.state.userExists && this.state.isLoginClicked}
+                        helperText={this.state.fields.username.error? 'Incorrect username' : ''}
+                        error={this.state.fields.username.error}
                         onChange={(event) => this.handleChange(event, 'username')}
                     />
                     <TextField
@@ -131,14 +147,10 @@ class FormLogin extends Component {
                                 </InputAdornment>
                             ),
                         }}
-                        error={!this.state.userExists && this.state.isLoginClicked}
+                        error={this.state.fields.password.error}
+                        helperText={this.state.fields.password.error? 'Incorrect password' : ''}
                         onChange={(event) => this.handleChange(event, 'password')}
                     />
-                    <div
-                        className={classes.errorText}
-                        hidden={this.state.userExists || !this.state.isLoginClicked}>
-                        Incorrect username and/or password.
-                    </div>
                     <div className={classes.containerBtn}>
                         <Button
                             type="submit"
@@ -153,4 +165,4 @@ class FormLogin extends Component {
     }
 }
 
-export default withStyles(styles)(FormLogin);
+export default withRouter(withStyles(styles)(FormLogin));
