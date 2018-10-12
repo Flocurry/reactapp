@@ -51,7 +51,7 @@ class FormLogin extends Component {
         this.setState({
             showPassword: !this.state.showPassword
         });
-    };
+    }
 
     handleChange(event, fieldName) {
         let fields = this.state.fields;
@@ -65,8 +65,8 @@ class FormLogin extends Component {
     handleSubmit(e) {
         // Permet de ne pas rafraîchir la page sur le submit du form
         e.preventDefault();
-        let username = this.state.fields.username;
-        let password = this.state.fields.password;
+        let username = this.state.fields.username.value;
+        let password = this.state.fields.password.value;
         let fields = this.state.fields;
         let req = {
             url: 'http://127.0.0.1:8000/login/user?username=' + username + '&password=' + password,
@@ -80,6 +80,8 @@ class FormLogin extends Component {
             if (response.data.length > 0) {
                 userExists = true;
                 // setter
+                console.log('setItem');
+                
                 localStorage.setItem('userLogged', JSON.stringify(response.data[0]));
                 this.props.history.push('/home');
             }

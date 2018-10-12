@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { withRouter } from "react-router-dom";
-import {
-    UncontrolledDropdown,
-    DropdownToggle,
-    DropdownMenu,
-    DropdownItem
-} from 'reactstrap';
+import IconButton from '@material-ui/core/IconButton';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+// import {
+//     UncontrolledDropdown,
+//     DropdownToggle,
+//     DropdownMenu,
+//     DropdownItem
+// } from 'reactstrap';
 
 class Lougout extends Component {
 
@@ -15,9 +19,18 @@ class Lougout extends Component {
         this.state = {
             user: {},
             gender: null,
-            color: null
+            color: null,
+            anchorEl: null,
         }
     }
+
+    handleMenu = event => {
+        this.setState({ anchorEl: event.currentTarget });
+    };
+
+    handleClose = () => {
+        this.setState({ anchorEl: null });
+    };
 
     getGender(sexe) {
         let gender = 'Mr';
@@ -64,23 +77,34 @@ class Lougout extends Component {
     }
 
     render() {
+        const { classes } = this.props;
+        const { auth, anchorEl } = this.state;
+        const open = Boolean(anchorEl);
         return (
             <div>
-                <UncontrolledDropdown nav inNavbar>
-                    <DropdownToggle nav caret
-                        style={{ color: this.state.color }}
-                        // This syntax (arow function) ensures `this` is bound within handleClick
-                        onMouseOver={(e) => this.changeColor('blue', e)}
-                        onMouseLeave={(e) => this.changeColor('grey', e)}>
-                        <span className="fa fa-user"></span> {this.state.gender}. {this.state.user.username}
-                    </DropdownToggle>
-                    <DropdownMenu>
-                        <DropdownItem
-                            onClick={(e) => this.logout(e)}>
-                            Lougout
-                        </DropdownItem>
-                    </DropdownMenu>
-                </UncontrolledDropdown>
+                <IconButton
+                    aria-owns={open ? 'menu-appbar' : null}
+                    aria-haspopup="true"
+                    onClick={this.handleMenu}
+                    color="inherit">
+                    {this.state.gender}. {this.state.user.username}
+                    <AccountCircle />
+                </IconButton>
+                <Menu
+                    id="menu-appbar"
+                    anchorEl={anchorEl}
+                    anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                    open={open}
+                    onClose={this.handleClose}>
+                    <MenuItem onClick={this.handleClose}>Logout</MenuItem>
+                </Menu>
             </div>
         );
     }
