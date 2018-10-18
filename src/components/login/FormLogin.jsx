@@ -69,7 +69,7 @@ class FormLogin extends Component {
         let password = this.state.fields.password.value;
         let fields = this.state.fields;
         let req = {
-            url: 'http://127.0.0.1:8000/login/user?username=' + username + '&password=' + password,
+            url: process.env.REACT_APP_API_REST_URL + '/login/user?username=' + username + '&password=' + password,
             method: 'GET',
             withCredentials: true,
             credentials: 'same-origin'
@@ -80,8 +80,6 @@ class FormLogin extends Component {
             if (response.data.length > 0) {
                 userExists = true;
                 // setter
-                console.log('setItem');
-                
                 localStorage.setItem('userLogged', JSON.stringify(response.data[0]));
                 this.props.history.push('/home');
             }

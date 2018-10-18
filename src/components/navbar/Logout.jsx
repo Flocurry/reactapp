@@ -45,7 +45,7 @@ class Logout extends Component {
     handleLogout = (e) => {
         e.preventDefault();
         let req = {
-            url: 'http://127.0.0.1:8000/users/logout',
+            url: process.env.REACT_APP_API_REST_URL + '/users/logout',
             method: 'PUT',
             data: this.state.user
         }
