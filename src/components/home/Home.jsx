@@ -7,7 +7,6 @@ class Home extends Component {
         return (
             <div>
                 <ResponsiveDrawer />
-                Home
             </div>
         );
     }

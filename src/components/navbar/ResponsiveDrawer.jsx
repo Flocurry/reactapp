@@ -9,6 +9,9 @@ import Hidden from '@material-ui/core/Hidden';
 import Divider from '@material-ui/core/Divider';
 import SideMenu from './SideMenu';
 import Logout from './Logout';
+import Users from '../users/Users';
+import Roles from '../roles/Roles';
+import HomeBody from '../home/HomeBody';
 
 const drawerWidth = 240;
 
@@ -59,29 +62,44 @@ const styles = theme => ({
 class ResponsiveDrawer extends React.Component {
   state = {
     mobileOpen: false,
+    titleAppBar: 'Home'
   };
 
   handleDrawerToggle = () => {
     this.setState(state => ({ mobileOpen: !state.mobileOpen }));
   };
 
+  handleMenuSelected(libelle) {
+    this.setState({
+      titleAppBar: libelle
+    });
+  }
+
   render() {
     const { classes, theme } = this.props;
-
     const drawer = (
       <div>
         <h6 className={classes.appTitle}>My ReactApp</h6>
         <Divider />
-        <SideMenu />
+        <SideMenu
+          menuSelected={(libelle, e) => this.handleMenuSelected(libelle, e)} />
       </div>
     );
+
+    let bodyRender = <HomeBody />;
+    if (this.state.titleAppBar === 'Users') {
+      bodyRender = <Users />;
+    }
+    if (this.state.titleAppBar === 'Roles') {
+      bodyRender = <Roles />;
+    }
 
     return (
       <div className={classes.root}>
         <AppBar className={classes.appBar} position="static">
           <Toolbar>
             <Typography color="inherit" noWrap className={classes.typo}>
-              Home
+              {this.state.titleAppBar}
             </Typography>
             <Logout className={classes.logout} />
           </Toolbar>
@@ -114,9 +132,9 @@ class ResponsiveDrawer extends React.Component {
         </Hidden>
         <main className={classes.content}>
           <div className={classes.toolbar} />
-          <Typography noWrap>{'You think water moves fast? You should see ice.'}</Typography>
+          {bodyRender}
         </main>
-      </div>
+      </div >
     );
   }
 }

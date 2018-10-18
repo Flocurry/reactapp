@@ -6,6 +6,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Collapse from '@material-ui/core/Collapse';
 import Accessibility from '@material-ui/icons/Accessibility';
+import Home from '@material-ui/icons/Home';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 // CSS
@@ -28,8 +29,9 @@ class SideMenu extends Component {
         };
     }
 
-    handleListItemClick = (event, index) => {
+    handleListItemClick = (event, index, libelle) => {
         this.setState({ selectedIndex: index });
+        this.props.menuSelected(libelle, event);
     }
 
     handleCollapse = () => {
@@ -40,6 +42,15 @@ class SideMenu extends Component {
         const classes = this.props.classes;
         return (
             <div>
+                <ListItem
+                    button
+                    selected={this.state.selectedList === 0}
+                    onClick={event => this.handleListItemClick(event, 0, 'Home')}>
+                    <ListItemIcon>
+                        <Home />
+                    </ListItemIcon>
+                    <ListItemText inset primary="Home" />
+                </ListItem>
                 <ListItem button onClick={this.handleCollapse}>
                     <ListItemIcon>
                         <Accessibility />
@@ -52,15 +63,15 @@ class SideMenu extends Component {
                         <ListItem
                             className={classes.item}
                             button
-                            selected={this.state.selectedList === 0}
-                            onClick={event => this.handleListItemClick(event, 0)}>
+                            selected={this.state.selectedList === 1}
+                            onClick={event => this.handleListItemClick(event, 1, 'Users')}>
                             Users
                         </ListItem>
                         <ListItem
                             className={classes.item}
                             button
-                            selected={this.state.selectedList === 1}
-                            onClick={event => this.handleListItemClick(event, 1)}>
+                            selected={this.state.selectedList === 2}
+                            onClick={event => this.handleListItemClick(event, 2, 'Roles')}>
                             Roles
                         </ListItem>
                     </List>

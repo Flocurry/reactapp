@@ -27,8 +27,6 @@ class Logout extends Component {
     };
 
     handleClose = () => {
-        console.log('test');
-
         this.setState({
             anchorEl: null
         });
