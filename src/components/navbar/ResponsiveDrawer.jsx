@@ -5,11 +5,10 @@ import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
 import Hidden from '@material-ui/core/Hidden';
 import Divider from '@material-ui/core/Divider';
-import MenuIcon from '@material-ui/icons/Menu';
 import SideMenu from './SideMenu';
+import Logout from './Logout';
 
 const drawerWidth = 240;
 
@@ -39,6 +38,9 @@ const styles = theme => ({
     fontfamily: "Roboto",
     fontWeight: 500,
     marginLeft: 20
+  },
+  typo: {
+    flex: 1
   },
   drawerPaper: {
     width: drawerWidth,
@@ -76,19 +78,12 @@ class ResponsiveDrawer extends React.Component {
 
     return (
       <div className={classes.root}>
-        <AppBar className={classes.appBar}>
+        <AppBar className={classes.appBar} position="static">
           <Toolbar>
-            <IconButton
-              color="inherit"
-              aria-label="Open drawer"
-              onClick={this.handleDrawerToggle}
-              className={classes.navIconHide}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography color="inherit" noWrap>
+            <Typography color="inherit" noWrap className={classes.typo}>
               Home
             </Typography>
+            <Logout className={classes.logout} />
           </Toolbar>
         </AppBar>
         <Hidden mdUp>
