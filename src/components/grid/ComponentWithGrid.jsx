@@ -20,6 +20,7 @@ class ComponentWithGrid extends Component {
         this.state = {
             currentPage: 1,
             allDatas: [],
+            columns: [],
             pager: {},
             pagedItems: [],
             isLoaded: false,
@@ -37,11 +38,12 @@ class ComponentWithGrid extends Component {
         }
         // Arrow function permet d'avoir le this dans le callBack
         axios(req).then(response => {
-            let pager = this.getPager(response.data.length, this.state.currentPage, 5);
+            let pager = this.getPager(response.data.datas.length, this.state.currentPage, 5);
             this.setState({
-                allDatas: response.data,
+                allDatas: response.data.datas,
+                columns:response.data.columns,
                 pager: pager,
-                pagedItems: response.data.slice(pager.startIndex, pager.endIndex + 1),
+                pagedItems: response.data.datas.slice(pager.startIndex, pager.endIndex + 1),
                 isLoaded: true
             });
         }).catch(function (error) {
@@ -179,9 +181,6 @@ class ComponentWithGrid extends Component {
                             <div className="panel panel-default panel-table">
                                 <div className="panel-heading">
                                     <div className="row">
-                                        <div className="col col-xs-6">
-                                            <h3 className="panel-title">{this.props.componentName}</h3>
-                                        </div>
                                         <div hidden={!createNew} className="col col-xs-6 text-right">
                                             <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#idModal"
                                                 onClick={() => this.showModal('create')}>
@@ -192,6 +191,7 @@ class ComponentWithGrid extends Component {
                                 </div>
                                 <Grid
                                     datas={this.state.pagedItems}
+                                    columns={this.state.columns}
                                     componentName={this.props.componentName}
                                     deleteData={(id, e) => this.deleteData(id, e)}
                                     onShow={(action) => this.showModal(action)} />

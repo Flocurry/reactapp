@@ -8,6 +8,7 @@
     "axios": "^0.18.0",
     "prop-types": "^15.6.2",
     "react": "^16.4.2",
+    "react-data-grid": "^4.0.8",
     "react-dom": "^16.4.2",
     "react-fa-icon": "^0.1.4",
     "react-router": "^4.3.1",

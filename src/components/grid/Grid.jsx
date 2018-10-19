@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { array, string } from 'prop-types';
+import { array, object, string } from 'prop-types';
 import GridUsers from '../users/GridUsers';
 import GridRoles from '../roles/GridRoles';
 
@@ -7,6 +7,7 @@ class Grid extends Component {
 
     static propTypes = {
         datas: array.isRequired,
+        columns: array.isRequired,
         componentName: string.isRequired
     }
 
@@ -15,6 +16,7 @@ class Grid extends Component {
             case 'Users':
                 return <GridUsers
                     datas={this.props.datas}
+                    columns={this.props.columns}
                     componentName={this.props.componentName}
                     deleteUser={(id, e) => this.props.deleteData(id, e)} />;
             case 'Roles':
