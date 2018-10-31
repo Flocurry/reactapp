@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { array, object } from 'prop-types';
 import ReactDataGrid from 'react-data-grid';
+import DemoBase from '../grid/DemoBase';
 
 
 const cols = [{ key: 'id', name: 'ID', resizable: true}, { key: 'title', name: 'Title', resizable: true }];
@@ -20,13 +21,16 @@ class GridUsers extends Component {
     render() {
         let columns = cols;
         let datas = rows;
-        console.log(columns);
-        console.log(datas);
-        
         let rowGetter = rowNumber => datas[rowNumber]
         return (
-            <ReactDataGrid
+            // <ReactDataGrid
+            //     columns={columns}
+            //     rowGetter={rowGetter}
+            //     rowsCount={datas.length}
+            //     minHeight={500}/>
+            <DemoBase
                 columns={columns}
+                rows={datas}
                 rowGetter={rowGetter}
                 rowsCount={datas.length}
                 minHeight={500}/>
