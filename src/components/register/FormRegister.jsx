@@ -191,6 +191,14 @@ class FormRegister extends Component {
   }
 
   componentDidMount() {
+    // Custom validators
+    ValidatorForm.addValidationRule('length', (value) => {
+      let ret = true;
+      if (value.length > 10)
+        ret = false;;
+      return ret;
+    });
+
     // Récupérer les roles pour la select list
     let req = {
       url: process.env.REACT_APP_API_REST_URL + '/roles',
@@ -239,8 +247,8 @@ class FormRegister extends Component {
             onChange={this.handleChange}
             name="username"
             value={formData.username}
-            validators={['required']}
-            errorMessages={['this field is required']}
+            validators={['required', 'length']}
+            errorMessages={['username is required', '10 characters max']}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -256,8 +264,8 @@ class FormRegister extends Component {
             onChange={this.handleChange}
             name="firstname"
             value={formData.firstname}
-            validators={['required']}
-            errorMessages={['this field is required']}
+            validators={['required', 'length']}
+            errorMessages={['firstname is required', '10 characters max']}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -273,8 +281,8 @@ class FormRegister extends Component {
             onChange={this.handleChange}
             name="lastname"
             value={formData.lastname}
-            validators={['required']}
-            errorMessages={['this field is required']}
+            validators={['required', 'length']}
+            errorMessages={['lastname is required', '10 characters max']}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -291,7 +299,7 @@ class FormRegister extends Component {
             name="email"
             value={formData.email}
             validators={['required', 'isEmail']}
-            errorMessages={['this field is required', 'email is not valid']}
+            errorMessages={['email is required', 'email is not valid']}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -309,7 +317,7 @@ class FormRegister extends Component {
             type={showPassword ? 'text' : 'password'}
             value={formData.password}
             validators={['required']}
-            errorMessages={['this field is required']}
+            errorMessages={['password is required']}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -331,7 +339,7 @@ class FormRegister extends Component {
             select
             value={formData.sexe}
             validators={['required']}
-            errorMessages={['this field is required']}>
+            errorMessages={['sexe is required']}>
             <MenuItem value="Homme">Homme</MenuItem>
             <MenuItem value="Femme">Femme</MenuItem>
           </TextValidator>
@@ -345,7 +353,7 @@ class FormRegister extends Component {
             select
             value={formData.role_id}
             validators={['required']}
-            errorMessages={['this field is required']}>
+            errorMessages={['role is required']}>
             {this.state.roles.map((role, index) => {
               return ([
                 <MenuItem value={role.role_id}>{role.libelle}</MenuItem>
