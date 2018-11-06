@@ -1,42 +1,96 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import axios from 'axios';
+// Material UI form validator
+import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 // Material Core
-import CssBaseline from '@material-ui/core/CssBaseline';
-import InputAdornment from '@material-ui/core/InputAdornment'
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import IconButton from '@material-ui/core/IconButton';
+import {
+  InputLabel,
+  IconButton,
+  Button,
+  CssBaseline,
+  Input,
+  FormControl,
+  Select,
+  MenuItem,
+  Snackbar,
+  Avatar,
+  InputAdornment
+} from '@material-ui/core';
 // Material Icons
-import AccountCircle from '@material-ui/icons/AccountCircle';
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import {
+  AccountCircle,
+  Email,
+  Visibility,
+  VisibilityOff,
+  Delete
+} from '@material-ui/icons';
 // CSS
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
-    form: {
-        marginTop: theme.spacing.unit * 4
-    },
-    containerBtn: {
-        marginTop: theme.spacing.unit * 4,
-        textAlign: "center"
-    },
-    errorText: {
-        marginTop: theme.spacing.unit * 3,
-        fontSize: 12,
-        color: 'red',
-        textAlign: 'center'
-    }
+  form: {
+    // marginTop: theme.spacing.unit * 4,
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
+  avatar: {
+    marginTop: theme.spacing.unit * 4,
+    width: 110,
+    height: 110,
+    size: 20
+    // backgroundSize: 'cover',
+    // backgroundPosition: 'top center'
+  },
+  textField: {
+    marginLeft: theme.spacing.unit * 4,
+    marginRight: theme.spacing.unit * 4,
+  },
+  containerSelect: {
+    marginTop: theme.spacing.unit * 2,
+    marginLeft: theme.spacing.unit * 4,
+    marginRight: theme.spacing.unit * 4,
+  },
+  containerBtn: {
+    marginLeft: theme.spacing.unit * 17,
+    marginTop: theme.spacing.unit * 4,
+  },
+  icon: {
+    margin: theme.spacing.unit,
+    fontSize: 20,
+  },
 });
+
+const unkownAvatar = 'https://bluecowsoftware.com/wp-content/uploads/2016/10/05-512.png';
 
 class FormRegister extends Component {
 
-  state = {
-    showPassword: false,
-    fields: {},
-    userExists: false,
-    isRegisterClicked: false
-  };
+  constructor(props) {
+    super(props)
+    this.state = {
+      showPassword: false,
+      userExists: false,
+      open: false,
+      vertical: 'bottom',
+      horizontal: 'center',
+      messageSnackbar: '',
+      formData: {
+        username: '',
+        firstname: '',
+        lastname: '',
+        email: '',
+        password: '',
+        sexe: '',
+        role_id: '',
+        image: ''
+      },
+      roles: [],
+      submitted: false,
+      avatar: unkownAvatar
+    }
+    // preserve the initial state in a new object
+    this.baseState = this.state
+  }
 
   handleClickShowPassword = () => {
     this.setState({
@@ -44,72 +98,217 @@ class FormRegister extends Component {
     });
   };
 
-  handleSubmit(e) {
-    // Permet de ne pas rafraîchir la page sur le submit du form
-    e.preventDefault();
+  handleChange = (event) => {
+    const { formData } = this.state;
+    formData[event.target.name] = event.target.value;
+    this.setState({ formData });
+  }
+
+  handleClose = () => {
     this.setState({
-      userExists: false,
-      isRegisterClicked: true
+      open: false
     });
-    // let username = this.state.fields.username;
-    // let password = this.state.fields.password;
-    // let req = {
-    //     url: 'http://localhost/login/user?username=' + username + '&password=' + password,
-    //     method: 'GET',
-    //     withCredentials: true,
-    //     credentials: 'same-origin'
-    // }
-    // // Arrow function permet d'avoir le this dans le callBack
-    // axios(req).then(response => {
-    //     let userExists = false;
-    //     if (response.data.length > 0) {
-    //         userExists = true;
-    //         // setter
-    //         localStorage.setItem('userLogged', JSON.stringify(response.data[0]));
-    //         this.props.history.push('/home');
-    //     }
-    //     // On change l'état du composant que si il est toujours dans le DOM
-    //     // (Erreur de Login)
-    //     if (!this.isUnMounted) {
-    //         this.setState({
-    //             isRegisterClicked: {
-    //                 userExists: userExists
-    //             }
-    //         });
-    //     }
-    // }).catch(function (error) {
-    //     console.log(error);
-    // });
+  };
+
+  handleSubmit = (event) => {
+    // Permet de ne pas rafraîchir la page sur le submit du form
+    event.preventDefault();
+    const { formData } = this.state;
+    let _formData = new FormData();
+    _formData.append("username", formData['username']);
+    _formData.append("firstname", formData['firstname']);
+    _formData.append("lastname", formData['lastname']);
+    _formData.append("sexe", formData['sexe']);
+    _formData.append("email", formData['email']);
+    _formData.append("password", formData['password']);
+    _formData.append("image", formData['image']);
+    _formData.append("role_id", formData['role_id']);
+
+    let req = {
+      url: process.env.REACT_APP_API_REST_URL + '/users/save',
+      method: 'POST',
+      data: _formData,
+      withCredentials: true,
+      credentials: 'same-origin',
+    }
+    // Arrow function permet d'avoir le this dans le callBack
+    axios(req).then(response => {
+      let userAdded = response.data.successAdd;
+      let messageSnackbar = 'Error! User not added!';
+      if (userAdded) {
+        messageSnackbar = 'User added with success!';
+      }
+      // On vide le champ input file
+      document.getElementById('fileInput').value = '';
+      this.setState({
+        userAdded: userAdded,
+        submitted: true,
+        open: true,
+        messageSnackbar: messageSnackbar,
+        formData: {
+          username: '',
+          firstname: '',
+          lastname: '',
+          email: '',
+          password: '',
+          sexe: '',
+          role_id: '',
+          image: ''
+        },
+        avatar: unkownAvatar
+      });
+    }).catch(function (error) {
+      console.log(error);
+    });
+  }
+
+  handleChangeFile = (event) => {
+    const {formData} = this.state;
+    if (event.target.files && event.target.files[0]) {
+      let selectedFile = event.target.files[0];
+      formData['image'] = selectedFile;
+      // allInputState[fieldName] = true;
+      let reader = new FileReader();
+      reader.onload = (event) => {
+        this.setState({
+          avatar: event.target.result,
+        });
+      }
+      reader.readAsDataURL(selectedFile);
+      this.setState({
+        avatar: this.state.avatar,
+        formData: formData
+      });
+    }
+  }
+
+  deleteFile = (event) => {
+    event.preventDefault()
+    this.setState({
+      avatar: unkownAvatar
+    });
+    document.getElementById('fileInput').value = '';
+  }
+
+  componentDidMount() {
+    // Récupérer les roles pour la select list
+    let req = {
+      url: process.env.REACT_APP_API_REST_URL + '/roles',
+      method: 'GET',
+      withCredentials: true,
+      credentials: 'same-origin'
+    }
+    // Arrow function permet d'avoir le this dans le callBack
+    axios(req).then(response => {
+      this.setState({
+        roles: response.data
+      });
+    }).catch(function (error) {
+      console.log(error);
+    });
   }
 
   render() {
+    const { showPassword, formData, vertical, horizontal, open, messageSnackbar, avatar } = this.state;
     const classes = this.props.classes;
     return (
       <React.Fragment>
         <CssBaseline />
-        <form
+        <Snackbar
+          anchorOrigin={{ vertical, horizontal }}
+          open={open}
+          onClose={this.handleClose}
+          ContentProps={{
+            'aria-describedby': 'message-id',
+          }}
+          message={<span id="message-id">{messageSnackbar}</span>} />
+        <Avatar
+          src={avatar}
+          className={classes.avatar} />
+        <ValidatorForm
           className={classes.form}
-          // This syntax ensures `this` is bound within handleClick
-          onSubmit={(e) => this.handleSubmit(e)}>
-          <TextField
+          ref="form"
+          onSubmit={this.handleSubmit}>
+          <TextValidator
+            className={classes.textField}
             fullWidth
-            autoFocus
             margin="normal"
             label="Username"
+            onChange={this.handleChange}
+            ref="username"
+            name="username"
+            value={formData.username}
+            validators={['required']}
+            errorMessages={['this field is required']}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
                   <AccountCircle />
                 </InputAdornment>
               ),
-            }}
-            error={!this.state.userExists && this.state.isRegisterClicked}
-          />
-          <TextField
+            }} />
+          <TextValidator
+            className={classes.textField}
             fullWidth
             margin="normal"
-            type={this.state.showPassword ? 'text' : 'password'}
+            label="Firstname"
+            onChange={this.handleChange}
+            name="firstname"
+            value={formData.firstname}
+            validators={['required']}
+            errorMessages={['this field is required']}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <AccountCircle />
+                </InputAdornment>
+              ),
+            }} />
+          <TextValidator
+            className={classes.textField}
+            fullWidth
+            margin="normal"
+            label="Lastname"
+            onChange={this.handleChange}
+            name="lastname"
+            value={formData.lastname}
+            validators={['required']}
+            errorMessages={['this field is required']}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <AccountCircle />
+                </InputAdornment>
+              ),
+            }} />
+          <TextValidator
+            className={classes.textField}
+            fullWidth
+            margin="normal"
+            label="Email"
+            onChange={this.handleChange}
+            name="email"
+            value={formData.email}
+            validators={['required', 'isEmail']}
+            errorMessages={['this field is required', 'email is not valid']}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Email />
+                </InputAdornment>
+              ),
+            }} />
+          <TextValidator
+            className={classes.textField}
+            fullWidth
+            margin="normal"
             label="Password"
+            onChange={this.handleChange}
+            name="password"
+            type={showPassword ? 'text' : 'password'}
+            value={formData.password}
+            validators={['required']}
+            errorMessages={['this field is required']}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -120,23 +319,59 @@ class FormRegister extends Component {
                   </IconButton>
                 </InputAdornment>
               ),
-            }}
-            error={!this.state.userExists && this.state.isRegisterClicked}
-          />
-          <div
-            className={classes.errorText}
-            hidden={this.state.userExists || !this.state.isRegisterClicked}>
-            Incorrect username and/or password.
-                  </div>
+            }} />
+          <FormControl
+            className={classes.containerSelect}
+            fullWidth>
+            <InputLabel shrink htmlFor="sexe-native-label-placeholder">
+              Sexe
+              </InputLabel>
+            <Select
+              value={formData.sexe}
+              onChange={this.handleChange}
+              input={<Input name="sexe" id="sexe-native-label-placeholder" />}>
+              <MenuItem value="Homme">Homme</MenuItem>
+              <MenuItem value="Femme">Femme</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl
+            className={classes.containerSelect}
+            fullWidth>
+            <InputLabel shrink htmlFor="role-native-label-placeholder">
+              Role
+              </InputLabel>
+            <Select
+              value={formData.role_id}
+              onChange={this.handleChange}
+              input={<Input name="role_id" id="role-native-label-placeholder" />}>
+              {this.state.roles.map((role, index) => {
+                return ([
+                  <MenuItem value={role.role_id}>{role.libelle}</MenuItem>
+                ])
+              })}
+            </Select>
+          </FormControl>
+          <div className={classes.containerSelect}>
+            <Button
+              variant="raised">
+              <input
+                id='fileInput'
+                type="file"
+                onChange={this.handleChangeFile} />
+              <Delete className={classes.icon}
+                onClick={this.deleteFile} />
+            </Button>
+          </div>
           <div className={classes.containerBtn}>
             <Button
               type="submit"
               variant="raised"
+              size="small"
               color="primary">
               Register
             </Button>
           </div>
-        </form>
+        </ValidatorForm>
       </React.Fragment >
     );
   }
