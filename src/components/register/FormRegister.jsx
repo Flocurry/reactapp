@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import MySnackbarContentWrapper from '../snackbar/MySnackbarContentWrapper';
 // Material UI form validator
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 // Material Core
@@ -13,6 +14,7 @@ import {
   Avatar,
   InputAdornment
 } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
 // Material Icons
 import {
   AccountCircle,
@@ -21,8 +23,6 @@ import {
   VisibilityOff,
   Delete
 } from '@material-ui/icons';
-// CSS
-import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
   form: {
@@ -67,6 +67,7 @@ class FormRegister extends Component {
       vertical: 'bottom',
       horizontal: 'center',
       messageSnackbar: '',
+      variantSnackBar: 'success',
       formData: {
         username: '',
         firstname: '',
@@ -107,6 +108,7 @@ class FormRegister extends Component {
     // Permet de ne pas rafraîchir la page sur le submit du form
     event.preventDefault();
     const { formData } = this.state;
+    let variantSnackBar = this.state.variantSnackBar;
     let _formData = new FormData();
     _formData.append("username", formData['username']);
     _formData.append("firstname", formData['firstname']);
@@ -127,9 +129,13 @@ class FormRegister extends Component {
     // Arrow function permet d'avoir le this dans le callBack
     axios(req).then(response => {
       let userAdded = response.data.successAdd;
-      let messageSnackbar = 'Error! User not added!';
+      let messageSnackbar = 'User not added!';
       if (userAdded) {
-        messageSnackbar = 'User added with success!';
+        messageSnackbar = 'User added!';
+        variantSnackBar = 'success';
+      }
+      else {
+        variantSnackBar = 'error';
       }
       // On vide le champ input file
       document.getElementById('fileInput').value = '';
@@ -138,6 +144,7 @@ class FormRegister extends Component {
         submitted: true,
         open: true,
         messageSnackbar: messageSnackbar,
+        variantSnackBar: variantSnackBar,
         formData: {
           username: '',
           firstname: '',
@@ -202,7 +209,7 @@ class FormRegister extends Component {
   }
 
   render() {
-    const { showPassword, formData, vertical, horizontal, open, messageSnackbar, avatar } = this.state;
+    const { showPassword, formData, vertical, horizontal, open, messageSnackbar, variantSnackBar, avatar } = this.state;
     const classes = this.props.classes;
     return (
       <React.Fragment>
@@ -211,10 +218,12 @@ class FormRegister extends Component {
           anchorOrigin={{ vertical, horizontal }}
           open={open}
           onClose={this.handleClose}
-          ContentProps={{
-            'aria-describedby': 'message-id',
-          }}
-          message={<span id="message-id">{messageSnackbar}</span>} />
+          message={<span id="message-id">{messageSnackbar}</span>}>
+          <MySnackbarContentWrapper
+            onClose={this.handleClose}
+            variant={variantSnackBar}
+            message={messageSnackbar} />
+        </Snackbar>
         <Avatar
           src={avatar}
           className={classes.avatar} />

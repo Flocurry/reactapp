@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter } from "react-router-dom";
 import axios from 'axios';
+import MySnackbarContentWrapper from '../snackbar/MySnackbarContentWrapper';
 // Material UI form validator
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 // Material Core
@@ -9,12 +10,11 @@ import InputAdornment from '@material-ui/core/InputAdornment'
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import { Snackbar } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
 // Material Icons
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
-// CSS
-import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
     form: {
@@ -42,6 +42,7 @@ class FormLogin extends Component {
             open: false,
             vertical: 'bottom',
             horizontal: 'center',
+            variantSnackBar: 'success',
             messageSnackbar: '',
             formData: {
                 username: '',
@@ -79,7 +80,7 @@ class FormLogin extends Component {
         const { formData } = this.state;
         let username = formData['username'];
         let password = formData['password'];
-        // let fields = this.state.fields;
+        let variantSnackBar = this.state.variantSnackBar;
         let req = {
             url: process.env.REACT_APP_API_REST_URL + '/login/user?username=' + username + '&password=' + password,
             method: 'GET',
@@ -99,9 +100,8 @@ class FormLogin extends Component {
             }
             if (!userExists) {
                 messageSnackbar = "This user doesn't exist";
+                variantSnackBar = 'error';
                 open = true;
-                //     fields.username.error = true;
-                //     fields.password.error = true;
             }
             // On change l'état du composant que si il est toujours dans le DOM
             // (Erreur de Login)
@@ -109,6 +109,7 @@ class FormLogin extends Component {
                 this.setState({
                     open: open,
                     messageSnackbar: messageSnackbar,
+                    variantSnackBar: variantSnackBar,
                     userExists: userExists,
                     submitted: true
                 });
@@ -124,7 +125,7 @@ class FormLogin extends Component {
     }
 
     render() {
-        const { showPassword, userExists, submitted, vertical, open, messageSnackbar, horizontal, formData } = this.state;
+        const { showPassword, userExists, submitted, vertical, open, messageSnackbar, variantSnackBar, horizontal, formData } = this.state;
         const classes = this.props.classes;
         return (
             <React.Fragment>
@@ -133,10 +134,12 @@ class FormLogin extends Component {
                     anchorOrigin={{ vertical, horizontal }}
                     open={open}
                     onClose={this.handleClose}
-                    ContentProps={{
-                        'aria-describedby': 'message-id',
-                    }}
-                    message={<span id="message-id">{messageSnackbar}</span>} />
+                    message={<span id="message-id">{messageSnackbar}</span>}>
+                    <MySnackbarContentWrapper
+                        onClose={this.handleClose}
+                        variant={variantSnackBar}
+                        message={messageSnackbar} />
+                </Snackbar>
                 <ValidatorForm
                     className={classes.form}
                     ref="form"
