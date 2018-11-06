@@ -5,13 +5,9 @@ import axios from 'axios';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 // Material Core
 import {
-  InputLabel,
   IconButton,
   Button,
   CssBaseline,
-  Input,
-  FormControl,
-  Select,
   MenuItem,
   Snackbar,
   Avatar,
@@ -30,34 +26,31 @@ import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
   form: {
-    // marginTop: theme.spacing.unit * 4,
     display: 'flex',
-    flexWrap: 'wrap',
+    flexWrap: 'wrap'
   },
   avatar: {
     marginTop: theme.spacing.unit * 4,
     width: 110,
     height: 110,
     size: 20
-    // backgroundSize: 'cover',
-    // backgroundPosition: 'top center'
   },
   textField: {
     marginLeft: theme.spacing.unit * 4,
-    marginRight: theme.spacing.unit * 4,
+    marginRight: theme.spacing.unit * 4
   },
-  containerSelect: {
+  containerInputFile: {
     marginTop: theme.spacing.unit * 2,
     marginLeft: theme.spacing.unit * 4,
-    marginRight: theme.spacing.unit * 4,
+    marginRight: theme.spacing.unit * 4
   },
   containerBtn: {
     marginLeft: theme.spacing.unit * 17,
-    marginTop: theme.spacing.unit * 4,
+    marginTop: theme.spacing.unit * 4
   },
   icon: {
     margin: theme.spacing.unit,
-    fontSize: 20,
+    fontSize: 20
   },
 });
 
@@ -163,7 +156,7 @@ class FormRegister extends Component {
   }
 
   handleChangeFile = (event) => {
-    const {formData} = this.state;
+    const { formData } = this.state;
     if (event.target.files && event.target.files[0]) {
       let selectedFile = event.target.files[0];
       formData['image'] = selectedFile;
@@ -235,7 +228,6 @@ class FormRegister extends Component {
             margin="normal"
             label="Username"
             onChange={this.handleChange}
-            ref="username"
             name="username"
             value={formData.username}
             validators={['required']}
@@ -320,38 +312,38 @@ class FormRegister extends Component {
                 </InputAdornment>
               ),
             }} />
-          <FormControl
-            className={classes.containerSelect}
-            fullWidth>
-            <InputLabel shrink htmlFor="sexe-native-label-placeholder">
-              Sexe
-              </InputLabel>
-            <Select
-              value={formData.sexe}
-              onChange={this.handleChange}
-              input={<Input name="sexe" id="sexe-native-label-placeholder" />}>
-              <MenuItem value="Homme">Homme</MenuItem>
-              <MenuItem value="Femme">Femme</MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl
-            className={classes.containerSelect}
-            fullWidth>
-            <InputLabel shrink htmlFor="role-native-label-placeholder">
-              Role
-              </InputLabel>
-            <Select
-              value={formData.role_id}
-              onChange={this.handleChange}
-              input={<Input name="role_id" id="role-native-label-placeholder" />}>
-              {this.state.roles.map((role, index) => {
-                return ([
-                  <MenuItem value={role.role_id}>{role.libelle}</MenuItem>
-                ])
-              })}
-            </Select>
-          </FormControl>
-          <div className={classes.containerSelect}>
+          <TextValidator
+            className={classes.textField}
+            fullWidth
+            margin="normal"
+            label="Sexe"
+            onChange={this.handleChange}
+            name="sexe"
+            select
+            value={formData.sexe}
+            validators={['required']}
+            errorMessages={['this field is required']}>
+            <MenuItem value="Homme">Homme</MenuItem>
+            <MenuItem value="Femme">Femme</MenuItem>
+          </TextValidator>
+          <TextValidator
+            className={classes.textField}
+            fullWidth
+            margin="normal"
+            label="Role"
+            onChange={this.handleChange}
+            name="role_id"
+            select
+            value={formData.role_id}
+            validators={['required']}
+            errorMessages={['this field is required']}>
+            {this.state.roles.map((role, index) => {
+              return ([
+                <MenuItem value={role.role_id}>{role.libelle}</MenuItem>
+              ])
+            })}
+          </TextValidator>
+          <div className={classes.containerInputFile}>
             <Button
               variant="raised">
               <input
