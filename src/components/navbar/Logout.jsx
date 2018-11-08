@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { withRouter } from "react-router-dom";
 import IconButton from '@material-ui/core/IconButton';
-import AccountCircle from '@material-ui/icons/AccountCircle';
 import Tooltip from '@material-ui/core/Tooltip';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { Typography } from '@material-ui/core';
+import { Typography, Avatar } from '@material-ui/core';
+
+const unkownAvatar = 'https://bluecowsoftware.com/wp-content/uploads/2016/10/05-512.png';
 
 class Logout extends Component {
 
@@ -17,6 +18,7 @@ class Logout extends Component {
             gender: null,
             color: null,
             anchorEl: null,
+            avatar: unkownAvatar
         }
     }
 
@@ -47,6 +49,7 @@ class Logout extends Component {
             method: 'PUT',
             data: this.state.user
         }
+        
         // Arrow function permet d'avoir le this dans le callBack
         axios(req).then(response => {
             // On supprime tous les localStorage
@@ -62,14 +65,21 @@ class Logout extends Component {
         let user = JSON.parse(localStorage.getItem('userLogged'));
         let gender = this.getGender(user.sexe);
         let color = 'grey';
+        let avatar = unkownAvatar;
+        if(user.image !== 'noimage.txt'){
+            avatar = process.env.REACT_APP_API_REST_URL + '/users/image/' + user.image;
+        }
+        // Arrow function permet d'avoir le this dans le callBack
         this.setState({
             user: user,
             gender: gender,
-            color: color
+            color: color,
+            avatar: avatar
         });
     }
 
     render() {
+        const { avatar } = this.state;
         const anchorEl = this.state.anchorEl;
         const open = Boolean(anchorEl);
         const titleTooltip = 'Hello ' + this.state.gender + '. ' + this.state.user.username;
@@ -82,7 +92,8 @@ class Logout extends Component {
                             aria-haspopup="true"
                             onClick={this.handleMenu}
                             color="inherit">
-                            <AccountCircle />
+                            <Avatar
+                                src={avatar}/>
                         </IconButton>
                     </Tooltip>
                     <Menu
