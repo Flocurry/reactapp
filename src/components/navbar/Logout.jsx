@@ -6,9 +6,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { Typography, Avatar } from '@material-ui/core';
-
-const unkownAvatar = 'https://bluecowsoftware.com/wp-content/uploads/2016/10/05-512.png';
-
+import unkownAvatar from '../../images/unknown.png';
 class Logout extends Component {
 
     constructor(props) {
