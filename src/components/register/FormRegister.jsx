@@ -24,6 +24,8 @@ import {
   Delete
 } from '@material-ui/icons';
 
+import unkownAvatar from '../../images/unknown.png';
+
 const styles = theme => ({
   form: {
     display: 'flex',
@@ -53,8 +55,6 @@ const styles = theme => ({
     fontSize: 20
   },
 });
-
-const unkownAvatar = 'https://bluecowsoftware.com/wp-content/uploads/2016/10/05-512.png';
 
 class FormRegister extends Component {
 
