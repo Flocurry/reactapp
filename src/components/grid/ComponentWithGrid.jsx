@@ -1,38 +1,34 @@
-import React, { Component } from 'react';
+import React from 'react';
 import axios from 'axios';
-import { string } from 'prop-types';
-// import NavBarApp from '../navbar/NavBarApp';
-// import Paginator from '../grid/Paginator';
-// import Grid from './Grid';
-// import ModalParent from '../modal/ModalParent';
-import GridTest from './GridTest';
+import PropTypes from 'prop-types';
+import DevExpressReactGrid from './DevExpressReactGrid';
 
-class ComponentWithGrid extends Component {
+const getRowId = row => row.id;
+class ComponentWithGrid extends React.PureComponent {
 
     static propTypes = {
-        componentName: string.isRequired,
-        urlGetDatas: string.isRequired,
-        urlDeleteData: string.isRequired,
-        columnName: string.isRequired
+        urlGetDatas: PropTypes.string.isRequired,
+        urlDeleteData: PropTypes.string.isRequired
     }
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            currentPage: 1,
-            allDatas: [],
-            columns: [],
-            columnsHidden: [],
-            columnsSorting: [],
-            columnsFilters: [],
-            columnsOrder: [],
-            columnsWidths: [],
-            pager: {},
-            pagedItems: [],
-            isLoaded: false,
-            isModalOpen: false,
-            titleModal: ''
-        }
+    state = {
+        allDatas: [],
+        columns: [],
+        columnsHidden: [],
+        columnsSorting: [],
+        columnsFilters: [],
+        columnsOrder: [],
+        columnsWidths: [],
+        isGridLoaded: false,
+        openDialog: false,
+        titleDialog: '',
+        contentDialog: '',
+        selection: [],
+        editingRowIds: [],
+        addedRows: [],
+        rowChanges: {},
+        yesDialog: '',
+        idDeleteSelected: null
     }
 
     componentDidMount() {
@@ -52,111 +48,146 @@ class ComponentWithGrid extends Component {
                 columnsFilters: response.data.columnsFilters,
                 columnsOrder: response.data.columnsOrder,
                 columnsWidths: response.data.columnsWidths,
-                isLoaded: true
+                isGridLoaded: true
             });
         }).catch(function (error) {
             console.log(error);
         });
     }
 
-    // deleteData(id, e) {
-    //     e.preventDefault();
-    //     let req = {
-    //         url: this.props.urlDeleteData + id,
-    //         method: 'DELETE',
-    //         withCredentials: true,
-    //         credentials: 'same-origin',
-    //     }
-    //     // Arrow function permet d'avoir le this dans le callBack
-    //     axios(req).then(response => {
-    //         // On supprime le user du state
-    //         let allDatas = this.filterParams(this.state.allDatas, { 'id': id, 'columName': this.props.columnName });
-    //         let pager = this.getPager(allDatas.length, this.state.currentPage, 5);
-    //         this.setState({
-    //             allDatas: allDatas,
-    //             pager: pager,
-    //             pagedItems: allDatas.slice(pager.startIndex, pager.endIndex + 1)
-    //         });
-    //     }).catch(function (error) {
-    //         console.log(error);
-    //     });
-    // }
+    deleteData = (id) => {
+        let req = {
+            url: this.props.urlDeleteData + id,
+            method: 'DELETE',
+            withCredentials: true,
+            credentials: 'same-origin',
+        }
+        // Arrow function permet d'avoir le this dans le callBack
+        axios(req).then(response => {
+            // On supprime le user du state
+            let allDatas = this.filterParams(this.state.allDatas, { 'id': id, 'columName': 'id' });
+            this.setState({
+                allDatas: allDatas
+            });
+        }).catch(function (error) {
+            console.log(error);
+        });
+    }
 
-    // toggleModal() {
-    //     this.setState({
-    //         isModalOpen: !this.state.isModalOpen
-    //     });
-    // }
+    filterParams = (allDatas, params) => {
+        return allDatas.filter(item => {
+            return item[params.columName] !== params.id;
+        });
+    }
 
-    // showModal(action) {
-    //     let titleModal = this.state.titleModal;
-    //     switch (action) {
-    //         case 'create':
-    //             titleModal = 'New role';
-    //             break;
-    //         case 'edit':
-    //             titleModal = 'Edit role';
-    //             break;
-    //         default:
-    //             return '';
-    //     }
-    //     this.setState({
-    //         isModalOpen: true,
-    //         titleModal: titleModal
-    //     });
-    // }
+    getRowId = (row) => {
+        return row[this.props.primaryKey];
+    }
+
+    changeColumnWidths = (columnsWidths) => {
+        this.setState({
+            columnsWidths
+        });
+    }
+
+    hiddenColumnNamesChange = (columnsHidden) => {
+        this.setState({
+            columnsHidden
+        });
+    }
+
+    changeSorting = (columnsSorting) => {
+        this.setState({
+            columnsSorting
+        });
+    }
+
+    changeFilters = (columnsFilters) => {
+        this.setState({
+            columnsFilters
+        });
+    }
+
+    changeSelection = (selection) => {
+        this.setState({
+            selection
+        });
+    }
+
+    changeColumnOrder = (columnsOrder) => {
+        this.setState({
+            columnsOrder
+        });
+    }
+
+    commitChanges = ({ added, changed, deleted }) => {
+        let { allDatas } = this.state;
+        let rowDeleted;
+        if (deleted) {
+            const deletedSet = new Set(deleted);
+            rowDeleted = allDatas.filter(row => deletedSet.has(row.id));
+
+            this.setState({
+                openDialog: true,
+                titleDialog: 'Suppression user',
+                contentDialog: 'Êtes-vous sûr de vouloir supprimer ce user ?',
+                yesDialog: 'handleDelete',
+                idDeleteSelected: rowDeleted[0].id
+            });
+        }
+    }
+
+    handleCloseDialog = () => {
+        this.setState({
+            openDialog: false
+        });
+    }
+
+    handleYesDialog = () => {
+        switch (this.state.yesDialog) {
+            case 'handleDelete':
+                this.setState({
+                    openDialog: false
+                });
+                this.deleteData(this.state.idDeleteSelected);
+                break;
+            default:
+                break;
+        }
+    }
 
     render() {
-        // let createNew = this.props.componentName === 'Roles';
-        if (!this.state.isLoaded) {
-            return (
-                <div>
-                    Loading...
-                </div>
-            );
-        }
-        return (
-            <div>
-                <div className="container">
-                    <div className="row">
-                        <div className="col-md-10 col-md-offset-1">
-                            <div className="panel panel-default panel-table">
-                                {/* <div className="panel-heading">
-                                    <div className="row">
-                                        <div hidden={!createNew} className="col col-xs-6 text-right">
-                                            <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#idModal"
-                                                onClick={() => this.showModal('create')}>
-                                                Create New
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div> */}
-                                {/* <Grid
-                                    datas={this.state.pagedItems}
-                                    columns={this.state.columns}
-                                    componentName={this.props.componentName}
-                                    deleteData={(id, e) => this.deleteData(id, e)}
-                                    onShow={(action) => this.showModal(action)} /> */}
-                                <GridTest
-                                    columns={this.state.columns}
-                                    columnsHidden={this.state.columnsHidden}
-                                    columnsSorting={this.state.columnsSorting}
-                                    columnsFilters={this.state.columnsFilters}
-                                    columnsOrder={this.state.columnsOrder}
-                                    columnsWidths={this.state.columnsWidths}
-                                    rows={this.state.allDatas}
-                                    canSearch={true}
-                                    canSort={true}
-                                    canFilter={true}
-                                    canHideColumn={true}
-                                    canReorderColumn={true}
-                                    canResizeColumn={true} />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
+        const viewLoading = <div>Loading...</div>;
+        const viewGrid = <DevExpressReactGrid
+            canSearch={true}
+            canSort={true}
+            canFilter={true}
+            canHideColumn={true}
+            canReorderColumn={true}
+            canResizeColumn={true}
+            columns={this.state.columns}
+            rows={this.state.allDatas}
+            columnsHidden={this.state.columnsHidden}
+            columnsSorting={this.state.columnsSorting}
+            columnsFilters={this.state.columnsFilters}
+            columnsOrder={this.state.columnsOrder}
+            columnsWidths={this.state.columnsWidths}
+            selection={this.state.selection}
+            openDialog={this.state.openDialog}
+            titleDialog={this.state.titleDialog}
+            contentDialog={this.state.contentDialog}
+            handleCloseDialog={this.handleCloseDialog}
+            handleYesDialog={this.handleYesDialog}
+            commitChanges={this.commitChanges}
+            changeColumnWidths={this.changeColumnWidths}
+            hiddenColumnNamesChange={this.hiddenColumnNamesChange}
+            changeSorting={this.changeSorting}
+            changeFilters={this.changeFilters}
+            changeSelection={this.changeSelection}
+            changeColumnOrder={this.changeColumnOrder}
+            getRowId={getRowId} />;
+
+        return (!this.state.isGridLoaded ? viewLoading : viewGrid);
     }
 }
 
