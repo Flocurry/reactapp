@@ -3,12 +3,12 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import DevExpressReactGrid from './DevExpressReactGrid';
 
-const getRowId = row => row.id;
 class ComponentWithGrid extends React.PureComponent {
 
     static propTypes = {
         urlGetDatas: PropTypes.string.isRequired,
-        urlDeleteData: PropTypes.string.isRequired
+        urlDeleteData: PropTypes.string.isRequired,
+        primaryKey: PropTypes.string.isRequired
     }
 
     state = {
@@ -30,6 +30,11 @@ class ComponentWithGrid extends React.PureComponent {
         yesDialog: '',
         idDeleteSelected: null
     }
+
+    getRowId = (row) => {
+        let primaryKey = this.props.primaryKey;
+        return row[primaryKey];
+    };
 
     componentDidMount() {
         let req = {
@@ -65,7 +70,7 @@ class ComponentWithGrid extends React.PureComponent {
         // Arrow function permet d'avoir le this dans le callBack
         axios(req).then(response => {
             // On supprime le user du state
-            let allDatas = this.filterParams(this.state.allDatas, { 'id': id, 'columName': 'id' });
+            let allDatas = this.filterParams(this.state.allDatas, id);
             this.setState({
                 allDatas: allDatas
             });
@@ -75,8 +80,9 @@ class ComponentWithGrid extends React.PureComponent {
     }
 
     filterParams = (allDatas, params) => {
+        let primaryKey = this.props.primaryKey;
         return allDatas.filter(item => {
-            return item[params.columName] !== params.id;
+            return item[primaryKey] !== params;
         });
     }
 
@@ -125,14 +131,14 @@ class ComponentWithGrid extends React.PureComponent {
         let rowDeleted;
         if (deleted) {
             const deletedSet = new Set(deleted);
-            rowDeleted = allDatas.filter(row => deletedSet.has(row.id));
+            rowDeleted = allDatas.filter(row => deletedSet.has(row.user_id));
 
             this.setState({
                 openDialog: true,
                 titleDialog: 'Suppression user',
                 contentDialog: 'Êtes-vous sûr de vouloir supprimer ce user ?',
                 yesDialog: 'handleDelete',
-                idDeleteSelected: rowDeleted[0].id
+                idDeleteSelected: rowDeleted[0].user_id
             });
         }
     }
@@ -185,7 +191,7 @@ class ComponentWithGrid extends React.PureComponent {
             changeFilters={this.changeFilters}
             changeSelection={this.changeSelection}
             changeColumnOrder={this.changeColumnOrder}
-            getRowId={getRowId} />;
+            getRowId={this.getRowId} />;
 
         return (!this.state.isGridLoaded ? viewLoading : viewGrid);
     }
