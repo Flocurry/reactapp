@@ -8,7 +8,10 @@ class ComponentWithGrid extends React.PureComponent {
     static propTypes = {
         urlGetDatas: PropTypes.string.isRequired,
         urlDeleteData: PropTypes.string.isRequired,
-        primaryKey: PropTypes.string.isRequired
+        primaryKey: PropTypes.string.isRequired,
+        titleDeleteDialog: PropTypes.string.isRequired,
+        contentDialog: PropTypes.string.isRequired,
+        columnDeleteDialogMessage: PropTypes.string.isRequired
     }
 
     state = {
@@ -127,18 +130,18 @@ class ComponentWithGrid extends React.PureComponent {
     }
 
     commitChanges = ({ added, changed, deleted }) => {
+        let { primaryKey, titleDeleteDialog, contentDialog, columnDeleteDialogMessage } = this.props;
         let { allDatas } = this.state;
         let rowDeleted;
         if (deleted) {
             const deletedSet = new Set(deleted);
-            rowDeleted = allDatas.filter(row => deletedSet.has(row.user_id));
-
+            rowDeleted = allDatas.filter(row => deletedSet.has(row[primaryKey]));
             this.setState({
                 openDialog: true,
-                titleDialog: 'Suppression user',
-                contentDialog: 'Êtes-vous sûr de vouloir supprimer ce user ?',
+                titleDialog: titleDeleteDialog,
+                contentDialog: contentDialog + rowDeleted[0][columnDeleteDialogMessage] + '?',
                 yesDialog: 'handleDelete',
-                idDeleteSelected: rowDeleted[0].user_id
+                idDeleteSelected: rowDeleted[0][primaryKey]
             });
         }
     }

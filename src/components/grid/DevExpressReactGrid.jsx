@@ -54,7 +54,7 @@ export default class DevExpressReactGrid extends React.PureComponent {
         columnsOrder: PropTypes.array.isRequired,
         columnsWidths: PropTypes.array.isRequired,
         selection: PropTypes.array.isRequired,
-        // Méhodes
+        // Mï¿½hodes
         handleCloseDialog: PropTypes.func.isRequired,
         handleYesDialog: PropTypes.func.isRequired,
         commitChanges: PropTypes.func.isRequired,
