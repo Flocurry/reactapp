@@ -16,6 +16,7 @@ const Roles = () =>
             urlGetDatas={urlGetDatas}
             urlDeleteData={urlDeleteData}
             primaryKey={primaryKey}
+            canShowIcon={false}
             canSelectRows={true}
             canSearch={true}
             canSort={true}
