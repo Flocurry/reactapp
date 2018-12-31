@@ -8,11 +8,7 @@ class ComponentWithGrid extends React.PureComponent {
     static propTypes = {
         // Strings
         urlGetDatas: PropTypes.string.isRequired,
-        urlDeleteData: PropTypes.string.isRequired,
         primaryKey: PropTypes.string.isRequired,
-        titleDeleteDialog: PropTypes.string.isRequired,
-        contentDialog: PropTypes.string.isRequired,
-        columnDeleteDialogMessage: PropTypes.string.isRequired,
         // Booleans
         canSelectRows: PropTypes.bool.isRequired,
         canSearch: PropTypes.bool.isRequired,

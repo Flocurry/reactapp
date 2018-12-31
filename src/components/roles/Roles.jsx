@@ -16,6 +16,13 @@ const Roles = () =>
             urlGetDatas={urlGetDatas}
             urlDeleteData={urlDeleteData}
             primaryKey={primaryKey}
+            canSelectRows={true}
+            canSearch={true}
+            canSort={true}
+            canFilter={true}
+            canHideColumn={true}
+            canReorderColumn={true}
+            canResizeColumn={true}
             titleDeleteDialog={titleDeleteDialog}
             contentDialog={contentDialog}
             columnDeleteDialogMessage={columnDeleteDialogMessage} />
