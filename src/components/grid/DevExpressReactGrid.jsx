@@ -66,6 +66,7 @@ export default class DevExpressReactGrid extends React.PureComponent {
         changeSelection: PropTypes.func.isRequired,
         changeColumnOrder: PropTypes.func.isRequired,
         getRowId: PropTypes.func.isRequired,
+        getCellValue: PropTypes.func.isRequired
     }
 
     render() {
@@ -133,7 +134,8 @@ export default class DevExpressReactGrid extends React.PureComponent {
                     <Grid
                         rows={this.props.rows}
                         columns={this.props.columns}
-                        getRowId={this.props.getRowId}>
+                        getRowId={this.props.getRowId}
+                        getCellValue={this.props.getCellValue}>
                         {searchState}
                         <EditingState
                             editingRowIds={this.props.editingRowIds}

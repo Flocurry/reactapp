@@ -2,6 +2,8 @@ import React from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import DevExpressReactGrid from './DevExpressReactGrid';
+import Visibility from '@material-ui/icons/Visibility';
+import { IconButton } from '@material-ui/core';
 
 class ComponentWithGrid extends React.PureComponent {
 
@@ -10,6 +12,7 @@ class ComponentWithGrid extends React.PureComponent {
         urlGetDatas: PropTypes.string.isRequired,
         primaryKey: PropTypes.string.isRequired,
         // Booleans
+        canShowIcon: PropTypes.bool.isRequired,
         canSelectRows: PropTypes.bool.isRequired,
         canSearch: PropTypes.bool.isRequired,
         canSort: PropTypes.bool.isRequired,
@@ -45,6 +48,13 @@ class ComponentWithGrid extends React.PureComponent {
     };
 
     getCellValue = (row, columnName) => {
+        if (columnName === 'action') {
+            if (this.props.canShowIcon) {
+                return <IconButton>
+                    <Visibility fontSize="default" />
+                </IconButton>;
+            }
+        }
         return row[columnName];
     }
 

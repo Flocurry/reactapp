@@ -15,7 +15,8 @@ const Users = () =>
             urlGetDatas={urlGetDatas}
             urlDeleteData={urlDeleteData}
             primaryKey={primaryKey}
-            canSelectRows={true}
+            canShowIcon={false}
+            canSelectRows={false}
             canSearch={true}
             canSort={true}
             canFilter={true}
