@@ -15,9 +15,17 @@ const Users = () =>
             urlGetDatas={urlGetDatas}
             urlDeleteData={urlDeleteData}
             primaryKey={primaryKey}
-            titleDeleteDialog={titleDeleteDialog}
+            canSelectRows={true}
+            canSearch={true}
+            canSort={true}
+            canFilter={true}
+            canHideColumn={true}
+            canReorderColumn={true}
+            canResizeColumn={true}
+            titleDeleteDialog={titleDeleteDialog}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
             contentDialog={contentDialog}
-            columnDeleteDialogMessage={columnDeleteDialogMessage} />
+            columnDeleteDialogMessage={columnDeleteDialogMessage} 
+            />
     )
 
 export default Users;

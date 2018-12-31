@@ -6,12 +6,21 @@ import DevExpressReactGrid from './DevExpressReactGrid';
 class ComponentWithGrid extends React.PureComponent {
 
     static propTypes = {
+        // Strings
         urlGetDatas: PropTypes.string.isRequired,
         urlDeleteData: PropTypes.string.isRequired,
         primaryKey: PropTypes.string.isRequired,
         titleDeleteDialog: PropTypes.string.isRequired,
         contentDialog: PropTypes.string.isRequired,
-        columnDeleteDialogMessage: PropTypes.string.isRequired
+        columnDeleteDialogMessage: PropTypes.string.isRequired,
+        // Booleans
+        canSelectRows: PropTypes.bool.isRequired,
+        canSearch: PropTypes.bool.isRequired,
+        canSort: PropTypes.bool.isRequired,
+        canFilter: PropTypes.bool.isRequired,
+        canHideColumn: PropTypes.bool.isRequired,
+        canReorderColumn: PropTypes.bool.isRequired,
+        canResizeColumn: PropTypes.bool.isRequired
     }
 
     state = {
@@ -38,6 +47,10 @@ class ComponentWithGrid extends React.PureComponent {
         let primaryKey = this.props.primaryKey;
         return row[primaryKey];
     };
+
+    getCellValue = (row, columnName) => {
+        return row[columnName];
+    }
 
     componentDidMount() {
         let req = {
@@ -168,12 +181,13 @@ class ComponentWithGrid extends React.PureComponent {
     render() {
         const viewLoading = <div>Loading...</div>;
         const viewGrid = <DevExpressReactGrid
-            canSearch={true}
-            canSort={true}
-            canFilter={true}
-            canHideColumn={true}
-            canReorderColumn={true}
-            canResizeColumn={true}
+            canSelectRows={this.props.canSelectRows}
+            canSearch={this.props.canSearch}
+            canSort={this.props.canSort}
+            canFilter={this.props.canFilter}
+            canHideColumn={this.props.canHideColumn}
+            canReorderColumn={this.props.canReorderColumn}
+            canResizeColumn={this.props.canResizeColumn}
             columns={this.state.columns}
             rows={this.state.allDatas}
             columnsHidden={this.state.columnsHidden}
@@ -194,7 +208,8 @@ class ComponentWithGrid extends React.PureComponent {
             changeFilters={this.changeFilters}
             changeSelection={this.changeSelection}
             changeColumnOrder={this.changeColumnOrder}
-            getRowId={this.getRowId} />;
+            getRowId={this.getRowId}
+            getCellValue={this.getCellValue} />;
 
         return (!this.state.isGridLoaded ? viewLoading : viewGrid);
     }

@@ -35,6 +35,7 @@ import ResponsiveDialog from '../modal/ResponsiveDialog';
 export default class DevExpressReactGrid extends React.PureComponent {
     static propTypes = {
         // Booleans
+        canSelectRows: PropTypes.bool.isRequired,
         canSearch: PropTypes.bool.isRequired,
         canSort: PropTypes.bool.isRequired,
         canFilter: PropTypes.bool.isRequired,
@@ -68,8 +69,10 @@ export default class DevExpressReactGrid extends React.PureComponent {
     }
 
     render() {
-        let searchPanel = null;
+        // Select rows
+        let selectRows = null;
         // Search variables
+        let searchPanel = null;
         let searchState = null;
         // Sorting variables
         let sortingState = null;
@@ -84,6 +87,9 @@ export default class DevExpressReactGrid extends React.PureComponent {
         // Resizing columns
         let tableColumnResizing;
 
+        if(this.props.canSelectRows){
+            selectRows = <TableSelection showSelectAll />;
+        }
         if (this.props.canSearch) {
             searchPanel = <SearchPanel />;
             searchState = <SearchState
@@ -116,7 +122,7 @@ export default class DevExpressReactGrid extends React.PureComponent {
         }
 
         return (
-
+            
             <div>
                 <span>
                     Total rows selected:
@@ -167,7 +173,7 @@ export default class DevExpressReactGrid extends React.PureComponent {
                         {searchPanel}
                         {columnChooser}
                         {tableFilterRow}
-                        <TableSelection showSelectAll />
+                        {selectRows}
                         <PagingPanel />
                     </Grid>
                     <ResponsiveDialog
